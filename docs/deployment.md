@@ -11,7 +11,8 @@ A credencial service role é usada exclusivamente no servidor para salvar histó
 Configure pelo painel de Secrets das Edge Functions:
 - OPENAI_API_KEY: credencial privada da conta OpenAI. AI_API_KEY também é aceito para compatibilidade.
 - AI_CHAT_URL: opcional; padrão https://api.openai.com/v1/chat/completions.
-- AI_MODEL: opcional; padrão gpt-5-mini, com reasoning_effort low e limite de 3.500 tokens de saída/raciocínio.
+- AI_ENABLED: manter ausente ou false até autorizar a ativação. Definir true somente na ativação.
+- Modelo fixado em gpt-5-nano, reasoning_effort minimal e limite de 1.500 tokens de saída/raciocínio. AI_MODEL não é mais usado; veja docs/ai-costs.md.
 - APP_ORIGIN: origem HTTPS do frontend publicado.
 
 A função usa Chat Completions e consulta 400 fichas e trechos do guia via search_knowledge. Sem a chave privada retorna 503 explícito. O limite é 40 solicitações por usuário/dia UTC; falhas após a reserva também contam. Configure também limites de gasto na conta do provedor.

@@ -1,5 +1,14 @@
 # Alterações
 
+## 23/09/2026 — Modo econômico das IAs
+
+- GPT-5 nano para as quatro especialidades, uma chamada por pergunta e sem troca automática por modelos mais caros.
+- Limite de 1.500 tokens de conclusão, raciocínio mínimo, duas interações de histórico e limite de tamanho do contexto.
+- Fontes sem duplicação, até quatro instituições por consulta e indicação de trechos abreviados.
+- Ativação explícita por `AI_ENABLED=true`; nenhuma chamada paga executada nesta revisão.
+- Edge Function counselor publicada na versão 5, com autenticação e consentimento preservados.
+- Preços, limites e procedimento de ativação documentados em `docs/ai-costs.md`.
+
 ## 23/09/2026 — Visual e navegação
 
 - Nova identidade visual com menu azul escuro, violeta, verde, ícones consistentes e maior legibilidade.

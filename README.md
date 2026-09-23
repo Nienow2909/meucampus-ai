@@ -12,7 +12,7 @@ Visual e experiência revisados em 23/09/2026. Veja [alterações](CHANGELOG.md)
 - Candidaturas com tarefas, prazos informados pelo aluno e vínculo à universidade.
 - Essays com editor, contagem, persistência e controle otimista de versão (não é histórico completo de versões).
 - SAT com 4 exercícios autorais iniciais e registro de tentativas; não é simulado oficial nem curso completo.
-- Quatro assistentes via Edge Function autenticada, consulta ao guia e OpenAI preparada. Falta cadastrar OPENAI_API_KEY e validar respostas reais.
+- Quatro assistentes via Edge Function autenticada, consulta ao guia e OpenAI preparada. Modo econômico GPT-5 nano; ativação adiada. Exige OPENAI_API_KEY e AI_ENABLED=true após autorização e validação.
 - Documentos privados de até 10 MB, URLs temporárias e exclusão.
 - Modo demonstração explícito com 15 instituições fictícias, separado das contas reais.
 
@@ -56,3 +56,5 @@ A migração em `supabase/migrations/` corresponde à estrutura já aplicada ao 
 Consulte `docs/` para contratos, fontes e próximos passos.
 
 Relatório de conteúdo e próximos passos: [docs/recomendacoes.md](docs/recomendacoes.md). Auditoria: [docs/catalog-audit.json](docs/catalog-audit.json).
+
+Política de consumo e custos dos assistentes: [docs/ai-costs.md](docs/ai-costs.md).

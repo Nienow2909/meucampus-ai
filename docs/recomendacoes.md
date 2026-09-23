@@ -2,7 +2,7 @@
 
 Relatório de 23 de setembro de 2026.
 
-**Situação da entrega:** catálogo e base de conhecimento gravados no Supabase; revisão visual e funcional enviada ao [GitHub, PR 1](https://github.com/Nienow2909/meucampus-ai/pull/1). Sete testes de regras, nove testes no Chrome e a verificação automática do GitHub passaram. A hospedagem privada usa o projeto registrado em `.openai/hosting.json`. A ativação das respostas reais de IA foi adiada pelo usuário. A função counselor versão 3 está ativa; o refinamento de filtragem no código deve ser publicado e validado junto com a próxima revisão das IAs. Cadastro, e-mail e URL de retorno ainda precisam de validação operacional antes de abrir a plataforma para alunos.
+**Situação da entrega:** catálogo e base de conhecimento gravados no Supabase; revisão visual e funcional enviada ao [GitHub, PR 1](https://github.com/Nienow2909/meucampus-ai/pull/1). Sete testes de regras, nove testes no Chrome e a verificação automática do GitHub passaram. A hospedagem privada usa o projeto registrado em `.openai/hosting.json`. A ativação das respostas reais de IA foi adiada pelo usuário. A Edge Function inclui autenticação, consentimento e política de consumo; as respostas reais ainda exigem ativação e validação. Cadastro, e-mail e URL de retorno ainda precisam de validação operacional antes de abrir a plataforma para alunos.
 
 ## O que está implementado
 
@@ -36,7 +36,7 @@ Os arquivos viraram uma base consultável. A cada pergunta, o servidor recupera 
 
 A recuperação atual combina nomes, siglas, interesses e busca textual. Busca semântica em português e inglês é uma próxima melhoria, acompanhada de testes de recuperação. Não recomendo começar por fine-tuning: primeiro complete as fontes e avalie as respostas.
 
-O padrão preparado é OpenAI `gpt-5-mini`, como ponto de partida de menor custo para tarefas delimitadas, com possibilidade de troca. A documentação informa suporte a Chat Completions e respostas estruturadas. Qualidade, custo real e disponibilidade na sua conta ainda precisam de validação. [Documentação do modelo](https://developers.openai.com/api/docs/models/gpt-5-mini).
+O padrão preparado agora é OpenAI `gpt-5-nano`, priorizando baixo custo conforme solicitado. Os quatro assistentes compartilham esse modelo e uma chamada por pergunta. Há limites de entrada/saída e histórico reduzido. O uso continua desativado até `AI_ENABLED=true`. Qualidade, custo real e disponibilidade na conta precisam de validação. Consulte [modo econômico](ai-costs.md) e a [documentação do modelo](https://developers.openai.com/api/docs/models/gpt-5-nano).
 
 | Assistente | Conteúdo prioritário | Exemplos de comportamento para ensinar |
 | --- | --- | --- |
