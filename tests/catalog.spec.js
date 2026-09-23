@@ -1,10 +1,10 @@
 import {test,expect} from '@playwright/test';
 test('catálogo real: 400 instituições, filtro, origem e acesso público',async({page})=>{
  await page.goto('/#universidades');
- await expect(page.getByText('400 universidades de 400 no catálogo',{exact:false})).toBeVisible();
+ await expect(page.getByText('400 universidades de 400 no catálogo',{exact:false})).toBeVisible({timeout:30000});
  await expect(page.locator('.university-card')).toHaveCount(24);
  await page.getByLabel('País',{exact:true}).selectOption('Canadá');
- await expect(page.getByText('24 universidades de 400 no catálogo',{exact:false})).toBeVisible();
+ await expect(page.getByText('24 universidades de 400 no catálogo',{exact:false})).toBeVisible({timeout:30000});
  await page.getByLabel('País',{exact:true}).selectOption('');
  await page.getByLabel('Buscar universidade ou curso').fill('Massachusetts Institute');
  await expect(page.locator('.university-card')).toHaveCount(1);

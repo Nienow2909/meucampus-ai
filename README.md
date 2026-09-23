@@ -2,6 +2,8 @@
 
 Plataforma em português para brasileiros que planejam graduação no exterior. Identidade própria, inspirada na categoria de orientação universitária do Collegize. Nenhum código-fonte do Collegize foi acessado ou reutilizado.
 
+Visual e experiência revisados em 23/09/2026. Veja [alterações](CHANGELOG.md) e [organização do projeto](docs/architecture.md).
+
 ## Estado da implementação
 
 - Perfil com notas na escala original, extracurriculares, curso, países, orçamento, bolsa e SAT atual/meta separados.
@@ -28,13 +30,14 @@ Nunca coloque service role, senha ou chave de IA em variáveis `VITE_*`, código
 ## Verificação
 
 - `npm test`: regras de domínio.
-- `npm run test:e2e`: Chrome instalado, testes da jornada e responsividade.
+- `npm run test:e2e:local`: Chrome instalado, jornada, responsividade e regressões de usabilidade.
+- `npm run test:e2e`: inclui integração com Supabase real; exige rede e `.env.local`.
 - `npm run build`: bundle de produção.
 - `tests/database-rls.sql`: teste transacional do banco com fixtures revertidas.
 
 ## Implantação
 
-O frontend pode ser hospedado em um serviço compatível com sites estáticos. Configure as duas variáveis `VITE_*` no ambiente de build, execute `npm run build` e publique `dist/`. O projeto está registrado no Sites para publicação privada de revisão, mas ainda não está publicado: a tentativa foi bloqueada pela restrição de rede da sessão.
+O frontend pode ser hospedado em um serviço compatível com sites estáticos. Configure as duas variáveis `VITE_*` no ambiente de build, execute `npm run build` e publique `dist/`. O projeto está registrado no Sites para hospedagem privada de revisão; a identidade da hospedagem fica em `.openai/hosting.json`.
 
 No Supabase Auth, configure a URL final do site e redirecionamentos permitidos. O fluxo utiliza cadastro por e-mail e senha com confirmação. Envio/entrega real de e-mail e recuperação de senha ainda precisam de validação e implementação, respectivamente.
 
