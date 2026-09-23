@@ -1,40 +1,13 @@
-# Plano de testes
+# Verificação
 
-## Autorização
+Automação:
+- Domínio: limites 3/4/5, sequência, duplicatas, escala escolar e diferença entre SAT real e simulado.
+- Navegador: onboarding, lista completa, persistência em demo, essay, tarefa, prática SAT, bloqueio da IA demo, escaping de nome e responsividade.
+- SQL transacional: isolamento entre dois usuários, transferência de dono bloqueada, limite de categoria, cota atômica e proteção de histórico.
+- Build de produção e auditoria de dependências.
 
-- estudante A não lê perfil, tasks, essays ou documentos de estudante B;
-- responsável perde acesso ao revogar vínculo;
-- orientador só vê escopos autorizados;
-- administrador não recebe essay no painel padrão.
-
-## Fontes
-
-- requisito sem fonte é exibido como `não confirmado`;
-- ciclo e data aparecem em toda estatística;
-- fonte vencida cria alerta;
-- conflito impede publicação sem revisão.
-
-## Agente
-
-- usuário não consegue enviar `userId` de outra pessoa para alterar dados;
-- ação relevante exige confirmação;
-- cancelamento não altera banco;
-- desfazer restaura versão anterior;
-- resposta sem fonte admite incerteza;
-- prompt injection em documento não muda instruções do sistema.
-
-## Candidatura
-
-- limites de palavra e caracteres contam corretamente;
-- versões de essay são preservadas;
-- atividades não aceitam impacto inventado como fato verificado;
-- deadlines usam fuso e ciclo corretos;
-- exportação inclui dados do usuário e fontes associadas;
-- exclusão remove ou agenda todos os dados privados.
-
-## Produto
-
-- keyboard navigation e labels;
-- layout em 320px, 768px e desktop;
-- estados vazio, carregando e erro;
-- `npm run build` sem erros e links internos navegáveis.
+Pendentes:
+- Cadastro, confirmação por e-mail e login ponta a ponta com contas controladas.
+- IA com credencial real, fidelidade às fontes e avaliação por especialidade.
+- Upload/download autenticado ponta a ponta e múltiplas sessões simultâneas de essays.
+- Revisão editorial e qualidade dos dados das 400 instituições.

@@ -1,0 +1,4 @@
+project_id = "meucampus-ai"
+
+[functions.counselor]
+verify_jwt = true

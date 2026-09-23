@@ -1,25 +1,53 @@
 # MeuCampus AI
 
-Protótipo navegável de uma plataforma brasileira de orientação acadêmica e candidatura universitária.
+Plataforma em português para brasileiros que planejam graduação no exterior. Identidade própria, inspirada na categoria de orientação universitária do Collegize. Nenhum código-fonte do Collegize foi acessado ou reutilizado.
 
-## Rodar localmente
+## Estado da implementação
 
-```bash
-npm install
-npm run dev
-```
+- Perfil com notas na escala original, extracurriculares, curso, países, orçamento, bolsa e SAT atual/meta separados.
+- Catálogo e fontes no Supabase, sem universidades reais importadas até o recebimento dos PDFs.
+- Lista de 3 sonho, 4 possíveis e 5 mais acessíveis. Limites e unicidade protegidos no banco.
+- Candidaturas com tarefas, prazos informados pelo aluno e vínculo à universidade.
+- Essays com editor, contagem, persistência e controle otimista de versão (não é histórico completo de versões).
+- SAT com 4 exercícios autorais iniciais e registro de tentativas; não é simulado oficial nem curso completo.
+- Quatro assistentes via Edge Function autenticada. Falta configurar o provedor de IA.
+- Documentos privados de até 10 MB, URLs temporárias e exclusão.
+- Modo demonstração explícito com 15 instituições fictícias, separado das contas reais.
 
-O MVP usa dados demonstrativos e `localStorage` para simular perfil, favoritos e tarefas. As integrações de autenticação, banco, IA, fontes oficiais e pagamentos devem ser conectadas antes de uma publicação em produção.
+## Rodar
 
-## Documentação do produto
+Requer Node.js 22.12 ou mais recente.
 
-- [Mapa de telas](docs/screen-map.md)
-- [Modelo de dados](docs/data-model.md)
-- [Contrato de API](docs/api-contract.md)
-- [Fluxo do agente](docs/agent-flow.md)
-- [Autorização](docs/authorization.md)
-- [Estratégia de fontes](docs/sources-strategy.md)
-- [Plano de testes](docs/test-plan.md)
-- [Backlog por fase](docs/backlog.md)
+1. Execute `npm ci`.
+2. Copie `.env.example` para `.env.local` e configure a URL e chave **publicável** do Supabase.
+3. Execute `npm run dev`.
 
-O conteúdo demonstrativo da interface é explicitamente marcado como tal. Requisitos acadêmicos, custos, bolsas e prazos reais só devem ser publicados após ingestão, conferência e aprovação de fonte oficial com ciclo identificado.
+Projeto Supabase preparado: `qfjvkidwyyhsenfgvpiy`, região São Paulo.
+Nunca coloque service role, senha ou chave de IA em variáveis `VITE_*`, código frontend ou Git.
+
+## Verificação
+
+- `npm test`: regras de domínio.
+- `npm run test:e2e`: Chrome instalado, testes da jornada e responsividade.
+- `npm run build`: bundle de produção.
+- `tests/database-rls.sql`: teste transacional do banco com fixtures revertidas.
+
+## Implantação
+
+O frontend pode ser hospedado em um serviço compatível com sites estáticos. Configure as duas variáveis `VITE_*` no ambiente de build, execute `npm run build` e publique `dist/`. A publicação do frontend ainda não foi realizada.
+
+No Supabase Auth, configure a URL final do site e redirecionamentos permitidos. O fluxo utiliza cadastro por e-mail e senha com confirmação. Envio/entrega real de e-mail e recuperação de senha ainda precisam de validação e implementação, respectivamente.
+
+A migração em `supabase/migrations/` corresponde à estrutura já aplicada ao projeto. Não reaplique em banco legado sem revisar compatibilidade. Consulte `docs/deployment.md`.
+
+## Pendências para um lançamento completo
+
+- Receber, extrair, revisar e importar os PDFs das 400 universidades.
+- Configurar e validar o modelo/provedor de IA com perguntas reais e checagem de fontes.
+- Ampliar o banco SAT e validar pedagogicamente o diagnóstico adaptativo.
+- Implementar painel editorial, atualização de fontes, exportação/exclusão de conta e requisitos operacionais de privacidade.
+- Validar cadastro e e-mail ponta a ponta, recuperação de senha e domínio final.
+- Publicar o frontend.
+- Probabilidade individual de admissão não implementada: exige dados históricos e validação. O sistema não exibe percentuais inventados.
+
+Consulte `docs/` para contratos, fontes e próximos passos.

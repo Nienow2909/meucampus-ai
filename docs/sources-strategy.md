@@ -1,16 +1,12 @@
-# Estratégia de fontes
+# Fontes e importação
 
-## Hierarquia
+Os PDFs das 400 universidades ainda não foram recebidos nesta sessão.
+Fluxo previsto: extrair → normalizar → identificar instituição/ciclo → revisar trechos, URLs e páginas → importar como rascunho → publicar após revisão.
 
-1. Edital e página oficial do curso e da admissão.
-2. Universidade, registrar, financial aid office e Common Data Set.
-3. MEC, INEP, Sisu, Prouni, Fies, CAPES, College Board, ACT, NCAA e órgãos oficiais.
-4. Fonte secundária identificada como secundária.
+O script scripts/import-universities.mjs valida JSON estruturado. Por padrão só valida; --write grava rascunhos e --publish exige fontes verificadas.
+Requer SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY somente no ambiente administrativo. Nunca use credenciais privadas em argumentos ou no Git.
 
-Cada registro precisa de URL, publicador, tipo, instituição, curso quando aplicável, ciclo, data de publicação, data de conferência, próxima revisão, trecho de suporte, confiança, status e revisor.
-
-## Alertas
-
-Criar alerta para prazo vencido, prompt alterado, custo sem ano, política de teste antiga, bolsa encerrada, URL quebrada, fonte ausente ou conflito entre fontes. Informação conflitante fica `em revisão` até aprovação humana.
-
-Os dados demonstrativos do protótipo permanecem marcados como demonstrativos e não devem ser usados como requisito real.
+Formato: array de registros com id UUID, name, country, cycle, courses[], summary, requirements{}, costs{}, scholarships[] e sources[].
+Cada fonte: id UUID, title, url HTTPS ou document_name, page quando PDF, excerpt, cycle, status e verified_at quando verificada.
+IDs estáveis permitem reimportação. Os requisitos devem representar o mesmo ciclo das fontes.
+A extração de PDFs e a revisão editorial dependem dos documentos reais e não foram executadas.
