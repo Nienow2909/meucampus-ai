@@ -2,21 +2,62 @@ import {agents, groups, escapeHtml as e, profileProgress} from '../domain.js';
 import {head, link} from '../ui/components.js';
 import {icon} from '../ui/icons.js';
 
+const featuredNodes = [
+  {name:'Harvard University', slug:'harvard', country:'Estados Unidos', focus:'Direito & Negócios', signal:'Ivy League', angle:-90},
+  {name:'Stanford University', slug:'stanford', country:'Estados Unidos', focus:'Tecnologia & Design', signal:'Vale do Silício', angle:-30},
+  {name:'MIT', slug:'mit', country:'Estados Unidos', focus:'Engenharia & Ciências', signal:'Pesquisa aplicada', angle:30},
+  {name:'Univ. of Toronto', slug:'toronto', country:'Canadá', focus:'Pesquisa & Medicina', signal:'Research U15', angle:90},
+  {name:'Yale University', slug:'yale', country:'Estados Unidos', focus:'Artes & Humanidades', signal:'Ivy League', angle:150},
+  {name:'Univ. of British Columbia', slug:'ubc', country:'Canadá', focus:'Sustentabilidade', signal:'Costa do Pacífico', angle:210},
+];
+
+function mindNode(u, i) {
+  return `<div class="jv-node" style="--a:${u.angle}deg">
+    <div class="jv-node-float">
+      <span class="jv-connector" aria-hidden="true"></span>
+      <a class="jv-balloon" href="#universidades" aria-label="Explorar universidades como ${e(u.name)}">
+        <span class="jv-photo"><img src="/campus/${u.slug}.png" alt="Campus da ${e(u.name)}" loading="lazy" width="196" height="122"></span>
+        <div class="jv-balloon-body">
+          <span class="jv-node-index">N-0${i+1}</span>
+          <h3>${e(u.name)}</h3>
+          <span class="jv-country">${e(u.country)}</span>
+          <div class="jv-scan"><div>
+            <span class="jv-scan-line">FOCO <b>${e(u.focus)}</b></span>
+            <span class="jv-scan-line">REDE <b>${e(u.signal)}</b></span>
+            <span class="jv-scan-line">STATUS <b>NO CATÁLOGO</b></span>
+          </div></div>
+        </div>
+      </a>
+    </div>
+  </div>`;
+}
+
 export function homeView(s) {
-  return `<section class="landing"><div class="landing-copy"><span class="eyebrow"><span class="status-dot"></span> DO BRASIL PARA O SEU PRÓXIMO CAPÍTULO</span>
+  return `<div class="jv">
+  <div class="jv-grid" aria-hidden="true"></div>
+  <div class="jv-vignette" aria-hidden="true"></div>
+
+  <section class="jv-hero">
+    <span class="jv-eyebrow"><span class="jv-dot"></span> SISTEMA MEUCAMPUS · ONLINE</span>
     <h1>Um mundo lá fora.<br><em>Um caminho seu.</em></h1>
-    <p>Encontre as universidades que fazem sentido para você. Organize suas escolhas e transforme a vontade de estudar fora em próximos passos.</p>
-    <div class="actions">${link('universidades', `Explorar universidades ${icon('arrow')}`, 'button primary')}<button class="button secondary" data-action="demo">Explorar demonstração</button></div>
-    <div class="landing-proof"><span>${icon('school')} 400 instituições no catálogo</span><span>${icon('globe')} Estados Unidos e Canadá</span></div>
-  </div><div class="journey-preview" aria-label="Sua jornada: perfil, universidades e preparação"><div class="preview-bar"><span class="mini-brand">m↗</span><b>Seu próximo capítulo</b><span class="chip green">Começa aqui</span></div>
-    <div class="preview-title"><span class="eyebrow">SEU MAPA DE POSSIBILIDADES</span><h2>Grandes sonhos.<br>Um plano de cada vez.</h2></div>
-    <div class="journey-stops"><div><span class="step-icon">${icon('user')}</span><section><small>01 · PONTO DE PARTIDA</small><h3>Sua história e seus objetivos</h3><p>Notas, interesses e experiências.</p></section><span class="step-check">${icon('check')}</span></div>
-    <div><span class="step-icon violet">${icon('school')}</span><section><small>02 · SEUS DESTINOS</small><h3>12 escolhas com intenção</h3><div class="preview-groups"><span><b>3</b> sonho</span><span><b>4</b> possíveis</span><span><b>5</b> mais acessíveis</span></div></section></div>
-    <div><span class="step-icon">${icon('pen')}</span><section><small>03 · PRÓXIMOS PASSOS</small><h3>Prepare sua candidatura</h3><p>Essays, SAT e organização, juntos.</p></section></div></div>
-    <div class="preview-footer">${icon('sparkle')} Orientação que acompanha seu momento.</div>
-  </div></section>
-  <section class="landing-features" aria-label="Suas ferramentas">${Object.entries(agents).map(([key,[name,description]],i)=>`<article><span class="feature-icon feature-${i}">${icon(['school','pen','chart','check'][i])}</span><h3>${name}</h3><p>${description}</p></article>`).join('')}</section>
-  <footer><span>MeuCampus AI · Sua jornada internacional.</span><span>Orientação com fontes. Sem promessa de aprovação.</span></footer>`;
+    <p>Uma inteligência que conecta você às universidades que fazem sentido. Explore a rede, organize suas escolhas e transforme a vontade de estudar fora em próximos passos.</p>
+    <div class="jv-actions">${link('universidades', `Explorar universidades ${icon('arrow')}`, 'button primary')}<button class="button secondary" data-action="demo">Explorar demonstração</button></div>
+    <div class="jv-proof"><span>${icon('school')} 400 instituições mapeadas</span><span>${icon('globe')} Estados Unidos e Canadá</span></div>
+  </section>
+
+  <section class="jv-field" aria-label="Rede de universidades conectadas à inteligência MeuCampus">
+    <div class="jv-core" aria-hidden="true">
+      <span class="jv-ring r3"></span><span class="jv-ring r2"></span><span class="jv-ring r1"></span>
+      <span class="jv-core-orb"></span>
+      <span class="jv-core-label">MEU<br>CAMPUS</span>
+    </div>
+    ${featuredNodes.map(mindNode).join('')}
+  </section>
+
+  <section class="jv-features" aria-label="Suas ferramentas">${Object.entries(agents).map(([key,[name,description]],i)=>`<article><span class="jv-feature-icon">${icon(['school','pen','chart','check'][i])}</span><h3>${e(name)}</h3><p>${e(description)}</p></article>`).join('')}</section>
+
+  <footer class="jv-footer"><span>MeuCampus AI · Sua jornada internacional.</span><span>Orientação com fontes. Sem promessa de aprovação.</span></footer>
+  </div>`;
 }
 
 export function dashboardView(s, taskList) {
