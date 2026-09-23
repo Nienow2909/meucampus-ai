@@ -2,7 +2,7 @@
 
 Relatório de 23 de setembro de 2026.
 
-**Situação da entrega:** catálogo e base de conhecimento gravados no Supabase; código e relatório salvos. A hospedagem privada foi preparada, mas a publicação não foi concluída: a rede desta sessão bloqueou o acesso ao destino. A função counselor versão 3 está ativa; o último refinamento local de filtragem aguarda nova publicação, bloqueada pela política de aprovação. A chave de IA e a URL de retorno do cadastro ainda dependem da conta do proprietário.
+**Situação da entrega:** catálogo e base de conhecimento gravados no Supabase; revisão visual e funcional enviada ao [GitHub, PR 1](https://github.com/Nienow2909/meucampus-ai/pull/1). Sete testes de regras, nove testes no Chrome e a verificação automática do GitHub passaram. A hospedagem privada usa o projeto registrado em `.openai/hosting.json`. A ativação das respostas reais de IA foi adiada pelo usuário. A função counselor versão 3 está ativa; o refinamento de filtragem no código deve ser publicado e validado junto com a próxima revisão das IAs. Cadastro, e-mail e URL de retorno ainda precisam de validação operacional antes de abrir a plataforma para alunos.
 
 ## O que está implementado
 
