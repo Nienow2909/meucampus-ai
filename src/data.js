@@ -6,7 +6,7 @@ export const demoUniversities = Array.from({length:15},(_,i)=>({id:`demo-${i+1}`
 export function demoLoad(){try{return JSON.parse(localStorage.getItem(demoKey))||{};}catch{return {};}}
 export function demoSave(data){localStorage.setItem(demoKey,JSON.stringify(data));}
 export async function unwrap(query){const {data,error}=await query;if(error)throw error;return data;}
-export async function catalog(){return supabase ? await unwrap(supabase.from('universities').select('*,university_sources(*)').order('name')) : [];}
+export async function catalog(){return supabase ? await unwrap(supabase.from('universities').select('id,name,country,city,courses,summary,cycle,requirements,guidance,catalog_rank,institutional_group').order('catalog_rank',{nullsFirst:false}).order('name')) : [];}
 export async function loadStudent(userId){
  const [profile,list,tasks,essays,attempts,messages]=await Promise.all([
   unwrap(supabase.from('student_profiles').select('*').eq('user_id',userId).maybeSingle()),

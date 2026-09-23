@@ -5,8 +5,8 @@
 3. Confirmar que o provedor foi configurado.
 4. Reservar cota diária de forma atômica.
 5. Buscar catálogo publicado, lista do aluno e até quatro interações da especialidade.
-6. Selecionar até oito instituições pelo contexto da lista e termos da pergunta. A busca inicial é lexical; não é um sistema vetorial.
-7. Montar instruções específicas de universidades, essays, SAT ou candidatura.
+6. Selecionar até oito instituições, priorizando nome/sigla explicitamente mencionados, depois escolhas e área. Recuperar detalhes/fontes e até oito trechos pelo RPC search_knowledge. Perguntas sobre instituições específicas descartam trechos atribuídos a outras instituições. A recuperação é textual, não vetorial.
+7. Montar instruções específicas de universidades, essays, SAT ou candidatura. Conteúdo de PDFs e perfis não pode substituir instruções. guidance é meta editorial; provided é fonte fornecida, não fato oficialmente validado.
 8. Enviar contexto ao provedor. Documentos privados não são enviados automaticamente.
 9. Validar JSON e IDs das fontes citadas.
 10. Salvar resposta no servidor, vinculada ao usuário autenticado.

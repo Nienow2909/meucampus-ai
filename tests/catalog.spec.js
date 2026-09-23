@@ -1,0 +1,23 @@
+import {test,expect} from '@playwright/test';
+test('catálogo real: 400 instituições, filtro, origem e acesso público',async({page})=>{
+ await page.goto('/#universidades');
+ await expect(page.getByText('400 universidades de 400 no catálogo',{exact:false})).toBeVisible();
+ await expect(page.locator('.university-card')).toHaveCount(24);
+ await page.getByLabel('País',{exact:true}).selectOption('Canadá');
+ await expect(page.getByText('24 universidades de 400 no catálogo',{exact:false})).toBeVisible();
+ await page.getByLabel('País',{exact:true}).selectOption('');
+ await page.getByLabel('Buscar universidade ou curso').fill('Massachusetts Institute');
+ await expect(page.locator('.university-card')).toHaveCount(1);
+ await page.getByRole('button',{name:'Explorar e escolher'}).click();
+ await expect(page.getByRole('dialog')).toContainText('1520–1570');
+ await expect(page.getByRole('dialog')).toContainText('Não são requisitos');
+ await expect(page.getByRole('dialog')).toContainText('p. 59');
+ await expect(page.getByRole('link',{name:'Entrar para salvar esta escolha'})).toBeVisible();
+ await page.screenshot({path:'test-results/catalog-detail.png'});
+ await page.getByRole('button',{name:'Fechar',exact:true}).click();
+ await page.getByLabel('Buscar universidade ou curso').fill('Broward');
+ await expect(page.locator('.university-card')).toContainText('Broward College');
+ await page.setViewportSize({width:390,height:844});
+ await page.screenshot({path:'test-results/catalog-mobile.png',fullPage:true});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

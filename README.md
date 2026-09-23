@@ -5,12 +5,12 @@ Plataforma em português para brasileiros que planejam graduação no exterior. 
 ## Estado da implementação
 
 - Perfil com notas na escala original, extracurriculares, curso, países, orçamento, bolsa e SAT atual/meta separados.
-- Catálogo e fontes no Supabase, sem universidades reais importadas até o recebimento dos PDFs.
+- Catálogo público com 400 instituições reais, 1.000 registros de origem e 3.334 trechos pesquisáveis no Supabase.
 - Lista de 3 sonho, 4 possíveis e 5 mais acessíveis. Limites e unicidade protegidos no banco.
 - Candidaturas com tarefas, prazos informados pelo aluno e vínculo à universidade.
 - Essays com editor, contagem, persistência e controle otimista de versão (não é histórico completo de versões).
 - SAT com 4 exercícios autorais iniciais e registro de tentativas; não é simulado oficial nem curso completo.
-- Quatro assistentes via Edge Function autenticada. Falta configurar o provedor de IA.
+- Quatro assistentes via Edge Function autenticada, consulta ao guia e OpenAI preparada. Falta cadastrar OPENAI_API_KEY e validar respostas reais.
 - Documentos privados de até 10 MB, URLs temporárias e exclusão.
 - Modo demonstração explícito com 15 instituições fictícias, separado das contas reais.
 
@@ -34,7 +34,7 @@ Nunca coloque service role, senha ou chave de IA em variáveis `VITE_*`, código
 
 ## Implantação
 
-O frontend pode ser hospedado em um serviço compatível com sites estáticos. Configure as duas variáveis `VITE_*` no ambiente de build, execute `npm run build` e publique `dist/`. A publicação do frontend ainda não foi realizada.
+O frontend pode ser hospedado em um serviço compatível com sites estáticos. Configure as duas variáveis `VITE_*` no ambiente de build, execute `npm run build` e publique `dist/`. O projeto está registrado no Sites para publicação privada de revisão, mas ainda não está publicado: a tentativa foi bloqueada pela restrição de rede da sessão.
 
 No Supabase Auth, configure a URL final do site e redirecionamentos permitidos. O fluxo utiliza cadastro por e-mail e senha com confirmação. Envio/entrega real de e-mail e recuperação de senha ainda precisam de validação e implementação, respectivamente.
 
@@ -42,12 +42,14 @@ A migração em `supabase/migrations/` corresponde à estrutura já aplicada ao 
 
 ## Pendências para um lançamento completo
 
-- Receber, extrair, revisar e importar os PDFs das 400 universidades.
+- Conferir oficialmente requisitos por ciclo; as 400 fichas importadas estão rotuladas como material fornecido.
 - Configurar e validar o modelo/provedor de IA com perguntas reais e checagem de fontes.
 - Ampliar o banco SAT e validar pedagogicamente o diagnóstico adaptativo.
 - Implementar painel editorial, atualização de fontes, exportação/exclusão de conta e requisitos operacionais de privacidade.
 - Validar cadastro e e-mail ponta a ponta, recuperação de senha e domínio final.
-- Publicar o frontend.
+- Validar o domínio e a experiência de cadastro antes da abertura para alunos.
 - Probabilidade individual de admissão não implementada: exige dados históricos e validação. O sistema não exibe percentuais inventados.
 
 Consulte `docs/` para contratos, fontes e próximos passos.
+
+Relatório de conteúdo e próximos passos: [docs/recomendacoes.md](docs/recomendacoes.md). Auditoria: [docs/catalog-audit.json](docs/catalog-audit.json).
