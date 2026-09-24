@@ -68,6 +68,12 @@ Este workflow foi preparado no código; a credencial e a variável não foram co
 
 Na leitura do painel em 24/09/2026, o SMTP personalizado estava desativado. A tela de templates informa que usa modelos padrão e requer SMTP próprio para editar assunto e corpo. Nenhuma credencial foi criada, obtida do navegador ou compartilhada.
 
-Próximo passo: configurar um serviço de envio e um remetente autorizado, inserir a credencial diretamente no painel do Supabase e validar o ciclo completo de cadastro, confirmação e recuperação em uma conta de teste controlada pelo responsável. Não declarar a entrega de e-mail como validada antes disso.
+Próximo passo: configurar um serviço de envio e um remetente autorizado, inserir a credencial diretamente no painel do Supabase e validar o ciclo completo de cadastro, confirmação e recuperação em uma conta de teste controlada pelo responsável. O teste abaixo confirma somente a entrega de recuperação ao endereço autorizado.
 
-O acabamento visual e os fluxos implementados estão publicados. As execuções periódicas foram pausadas após esta revisão; as pendências externas são SMTP/teste real, credencial de implantação do GitHub e abertura do acesso privado. A ativação de IA permanece explicitamente adiada.
+As execuções periódicas foram pausadas após a revisão autônoma. As pendências externas são SMTP próprio, ciclo completo de autenticação, credencial de implantação do GitHub e abertura do acesso privado. A ativação de IA permanece explicitamente adiada.
+
+## Teste real de entrega — 24/09/2026
+
+A pedido do responsável, foi realizado um envio de recuperação ao endereço informado por ele. A conta já existia e estava confirmada. O Supabase aceitou a solicitação (HTTP 200) e o responsável confirmou o recebimento na conversa. A senha não foi alterada; este resultado valida a entrega ao endereço testado, não o fluxo completo de redefinição nem a entrega a outros alunos. Não foi criada uma segunda conta nem reenviada uma confirmação para a conta já confirmada.
+
+SMTP personalizado permanece pendente para lançamento e personalização de assunto/corpo. O envio padrão foi suficiente para este teste específico. Nenhuma credencial privada ou endereço pessoal de teste foi incluído no repositório.

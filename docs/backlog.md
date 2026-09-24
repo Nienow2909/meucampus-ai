@@ -5,7 +5,7 @@
 3. Expandir SAT de quatro exercícios iniciais para banco revisado e diagnóstico adaptativo.
 4. Adicionar notas por matéria/ano e atividades estruturadas.
 5. Painel editorial, alertas de prazo e atualização de fontes.
-6. Histórico completo de versões de essays e exportação/exclusão de conta. Recuperação de senha implementada; entrega real de e-mail ainda precisa ser validada.
+6. Histórico completo de versões de essays e exportação/exclusão de conta. Recuperação implementada e entrega confirmada ao endereço autorizado; falta validar uma redefinição real completa.
 7. Configurar domínio/Auth e concluir cadastro e e-mail com contas reais antes de abrir a versão privada aos alunos.
 8. Probabilidades de admissão somente após obter dados históricos e validar o modelo.
 

@@ -2,10 +2,12 @@
 
 Plataforma em português para brasileiros que planejam graduação no exterior. Identidade própria, inspirada na categoria de orientação universitária do Collegize. Nenhum código-fonte do Collegize foi acessado ou reutilizado.
 
-Visual e experiência revisados em 23/09/2026. Veja [alterações](CHANGELOG.md) e [organização do projeto](docs/architecture.md).
+Visual e experiência revisados em 24/09/2026. Veja [sistema visual](docs/design-system.md) e [organização do projeto](docs/architecture.md).
 
 ## Estado da implementação
 
+- Páginas públicas Quem somos, Blog com três guias completos e Perguntas frequentes. Conteúdo editorial versionado em `src/content/articles.js`, com referências oficiais; não exige conta nem consulta de IA.
+- Página inicial com atalhos para experimentar as ferramentas, prévias do blog e navegação pública adaptada ao celular.
 - Perfil com notas na escala original, extracurriculares, curso, países, orçamento, bolsa e SAT atual/meta separados.
 - Catálogo público com 400 instituições reais, 1.000 registros de origem e 3.334 trechos pesquisáveis no Supabase.
 - Lista de 3 sonho, 4 possíveis e 5 mais acessíveis. Limites e unicidade protegidos no banco.
@@ -39,7 +41,7 @@ Nunca coloque service role, senha ou chave de IA em variáveis `VITE_*`, código
 
 O frontend pode ser hospedado em um serviço compatível com sites estáticos. Configure as duas variáveis `VITE_*` no ambiente de build, execute `npm run build` e publique `dist/`. O projeto está registrado no Sites para hospedagem privada de revisão; a identidade da hospedagem fica em `.openai/hosting.json`.
 
-No Supabase Auth, configure a URL final do site e redirecionamentos permitidos. O fluxo utiliza cadastro por e-mail e senha com confirmação. Envio/entrega real de e-mail e recuperação de senha ainda precisam de validação e implementação, respectivamente.
+O Site URL e os redirecionamentos de cadastro/recuperação estão configurados no Supabase Auth. Recuperação de senha implementada. Um envio real de recuperação foi aceito e seu recebimento confirmado pelo responsável em 24/09/2026; a senha não foi alterada. SMTP próprio e validação do ciclo completo com novos alunos continuam pendentes.
 
 A migração em `supabase/migrations/` corresponde à estrutura já aplicada ao projeto. Não reaplique em banco legado sem revisar compatibilidade. Consulte `docs/deployment.md`.
 

@@ -1,12 +1,20 @@
 import {agents, groups, escapeHtml as e, profileProgress} from '../domain.js';
 import {head, link} from '../ui/components.js';
 import {icon} from '../ui/icons.js';
+import {homeClosing} from './editorial.js';
 
 export function homeView(s) {
+  const tools = [
+    {page:'universidades',icon:'school',title:'Encontre seu lugar.',description:'Compare áreas e consulte as fontes de cada instituição antes de montar sua lista.',label:'Conhecer o catálogo',meta:'400 instituições · EUA e Canadá',detail:'<div class="choice-preview" aria-label="Estratégia de lista: 3 sonho, 4 possíveis e 5 mais acessíveis"><span><b>3</b> sonho</span><span><b>4</b> possíveis</span><span><b>5</b> mais acessíveis</span></div>'},
+    {page:'essays',icon:'pen',title:'Sua história, bem contada.',description:'Guarde ideias, desenvolva o texto e acompanhe o limite de palavras.',label:'Abrir espaço de escrita',meta:'Rascunhos e contagem de palavras'},
+    {page:'sat',icon:'chart',title:'Um estudo de cada vez.',description:'Resolva um exercício, confira a explicação e entenda onde melhorar.',label:'Experimentar uma questão',meta:'4 exercícios autorais para começar'},
+    {page:'candidaturas',icon:'check',title:'Do plano ao próximo passo.',description:'Organize tarefas e datas por universidade. Tudo o que precisa sair do papel, em um só lugar.',label:'Conhecer meu plano',meta:'Prazos, tarefas e escolhas reunidos',detail:'<div class="plan-preview" aria-label="Exemplos de tarefas"><span><i aria-hidden="true"></i> Separar o histórico escolar</span><span><i aria-hidden="true"></i> Revisar o primeiro essay</span></div>'},
+  ];
   return `<section class="landing"><div class="landing-copy"><span class="eyebrow">ESTUDAR FORA COMEÇA COM UM PLANO</span>
     <h1>Seu futuro.<br>Suas escolhas.<br><em>Um bom plano.</em></h1>
     <p>Da primeira pesquisa à candidatura: encontre universidades, organize seus prazos e prepare sua história. Tudo no seu ritmo.</p>
     <div class="actions">${link('universidades', `Explorar universidades ${icon('arrow')}`, 'button primary')}<button class="button secondary" data-action="demo">Explorar demonstração</button></div>
+    <p class="demo-caption">Teste as ferramentas sem criar uma conta.</p>
     <div class="landing-proof"><span>${icon('school')} 400 instituições no catálogo</span><span>${icon('globe')} Estados Unidos e Canadá</span></div>
   </div><div class="journey-preview" aria-label="Sua jornada: perfil, universidades e preparação"><div class="preview-bar"><span class="mini-brand">m↗</span><b>Seu próximo capítulo</b><span class="chip green">Começa aqui</span></div>
     <div class="preview-title"><span class="eyebrow">SEU MAPA DE POSSIBILIDADES</span><h2>Da ideia à<br>candidatura.</h2></div>
@@ -15,8 +23,9 @@ export function homeView(s) {
     <div><span class="step-icon">${icon('pen')}</span><section><small>03 · PRÓXIMOS PASSOS</small><h3>Prepare sua candidatura</h3><p>Essays, SAT e organização, juntos.</p></section></div></div>
     <div class="preview-footer">${icon('bookmark')} Suas escolhas, reunidas em um só lugar.</div>
   </div></section>
-  <section class="landing-features" aria-label="Suas ferramentas">${Object.entries(agents).map(([key,[name,description]],i)=>`<article><span class="feature-index">0${i+1}</span><span class="feature-icon feature-${i}">${icon(['school','pen','chart','check'][i])}</span><h3>${name}</h3><p>${description}</p></article>`).join('')}</section>
-  <footer><span>MeuCampus AI · Sua jornada internacional.</span><span>Orientação com fontes. Sem promessa de aprovação.</span></footer>`;
+  <section class="tools-intro"><div><span class="eyebrow">DA PESQUISA À CANDIDATURA</span><h2>Menos abas abertas.<br>Mais clareza para decidir.</h2></div><p>Escolha por onde começar.<br>O resto você constrói no seu tempo.</p></section>
+  <section class="landing-features" aria-label="Suas ferramentas">${tools.map((tool,i)=>`<article class="tool-card tool-card-${i}"><span class="feature-index">0${i+1}</span><span class="feature-icon feature-${i}">${icon(tool.icon)}</span><h3>${tool.title}</h3><p>${tool.description}</p>${tool.detail||''}<div class="tool-card-footer"><small>${tool.meta}</small>${tool.page==='universidades'||s.user||s.demo?link(tool.page,`${tool.label} ${icon('arrow')}`,'tool-link'):`<button class="tool-link" data-action="demo" data-demo-page="${tool.page}">${tool.label} ${icon('arrow')}</button>`}</div></article>`).join('')}</section>
+  ${homeClosing(s)}`;
 }
 
 export function dashboardView(s, taskList) {

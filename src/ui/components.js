@@ -20,10 +20,11 @@ export const navigation = [
 ];
 
 export function shell(s, content, isPublic) {
+  const publicNav=[['universidades','Universidades'],['quem-somos','Quem somos'],['blog','Blog']].map(([page,label])=>`<a class="text-link" href="#${page}" ${s.page===page||page==='blog'&&s.page.startsWith('blog/')?'aria-current="page"':''}>${label}</a>`).join('');
   const current = navigation.find(([id]) => id === s.page)?.[2] || 'Seu espaço';
   const links = navigation.map(([id, glyph, label], index) => `${index === 4 ? '<div class="nav-label">SUA PREPARAÇÃO</div>' : ''}<a href="#${id}" aria-label="${label}" ${s.page === id ? 'aria-current="page"' : ''} class="${s.page === id ? 'active' : ''}">${icon(glyph)}<span>${label}</span>${id === 'lista' ? `<small>${s.list.length}/12</small>` : ''}</a>`).join('');
   return `<div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div><a class="skip-link" href="#main-content">Pular para o conteúdo</a><div class="${isPublic ? 'public-shell' : 'app-shell'} ${s.menuOpen ? 'menu-open' : ''}">
-    ${isPublic ? `<header class="public-header">${brand()}<div class="header-links">${link('universidades', 'Explorar universidades', 'text-link')}${link(s.user || s.demo ? 'painel' : 'entrar', s.user || s.demo ? 'Meu painel' : 'Entrar', 'button primary')}</div></header>` : `
+    ${isPublic ? `<header class="public-header">${brand()}<nav class="header-links" aria-label="Navegação principal">${publicNav}</nav>${link(s.user || s.demo ? 'painel' : 'entrar', s.user || s.demo ? 'Meu painel' : 'Entrar', 'button primary')}</header>` : `
     <button class="menu-scrim" data-menu-close aria-label="Fechar menu" tabindex="-1"></button>
     <aside class="sidebar" id="main-navigation" aria-label="Menu principal"><div class="sidebar-brand">${brand()}<button class="icon-button mobile-only" data-menu-close aria-label="Fechar menu">${icon('close')}</button></div>
     <div class="workspace-label">MINHA JORNADA</div><nav>${links}</nav>
@@ -35,6 +36,7 @@ export function shell(s, content, isPublic) {
       ${s.error ? `<div class="error-banner" role="alert">${e(s.error)} <button class="text-link" data-action="retry">Tentar novamente</button></div>` : ''}
       <div class="page-content">${content}</div>
     </main>
+    ${isPublic?`<footer class="site-footer"><div class="footer-top"><div class="footer-brand">${brand().replace('MeuCampus, início','MeuCampus, voltar ao início')}<p>Pesquisa, escrita e preparação.<br>Seu próximo capítulo, com um plano.</p></div><nav aria-label="Explore o MeuCampus"><h2>Explore</h2>${link('universidades','Universidades','text-link')}${link('blog','Blog','text-link')}${link(s.user||s.demo?'painel':'entrar','Meu espaço','text-link')}</nav><nav aria-label="Sobre o MeuCampus"><h2>MeuCampus</h2>${link('quem-somos','Quem somos','text-link')}${link('duvidas','Perguntas frequentes','text-link')}<span class="contact-pending">Canais de contato em preparação.</span></nav></div><div class="footer-bottom"><span>© ${new Date().getFullYear()} MeuCampus</span><span>Orientação com fontes. Sem promessa de aprovação.</span></div></footer>`:''}
     ${isPublic ? '' : `<nav class="mobile-navigation" aria-label="Navegação rápida">${navigation.filter(([id]) => ['painel', 'universidades', 'lista'].includes(id)).map(([id,glyph,label]) => `<a href="#${id}" ${s.page === id ? 'aria-current="page"' : ''}>${icon(glyph)}<span>${id === 'painel' ? 'Meu caminho' : label}</span></a>`).join('')}<button data-menu-toggle aria-label="Mais opções" aria-expanded="${Boolean(s.menuOpen)}">${icon('menu')}<span>Mais</span></button></nav>`}
   </div>`;
 }

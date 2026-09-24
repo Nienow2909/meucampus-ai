@@ -1,4 +1,5 @@
 import {recoveryView} from './views/recovery.js';
+import {editorialPages,editorialTitle,editorialView} from './views/editorial.js';
 import {shell,link} from './ui/components.js';
 import {createViews} from './views/index.js';
 import {agents,groups,escapeHtml as e,nextSlot,validateProfile,wordCount,readiness} from './domain.js';
@@ -8,7 +9,7 @@ const blank=()=>({profile:null,list:[],tasks:[],essays:[],attempts:[],messages:[
 const s={...blank(),user:null,demo:false,universities:[],page:'inicio',agent:'universities',search:'',country:'',group:'',catalogPage:0,essayId:null,question:0,feedback:null,docs:[],error:'',busy:false,menuOpen:false,sort:'catalog',loading:false};
 s.recovery=new URLSearchParams(location.search).get('flow')==='recovery'||new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
 s.authLoading=true;
-const publicPages=['inicio','entrar','universidades','recuperar','nova-senha'];
+const publicPages=['inicio','entrar','universidades','recuperar','nova-senha',...editorialPages];
 const routeFromLocation=()=>s.recovery?'nova-senha':location.hash.slice(1)||'inicio';
 const views=createViews(s);
 const {home,login,dashboard,profile,universities,shortlist,applications,essays,sat,assistants,documents,guideDetails}=views;
@@ -26,9 +27,10 @@ function notify(m){const el=document.querySelector('#notice');el.textContent=m;e
 const fail=err=>{const send=document.querySelector('#chat-form button');if(send&&!s.busy){send.textContent='Enviar ↗';send.disabled=false;}notify(err.message||'Não foi possível concluir. Tente novamente.');};
 function render(){
  if(!publicPages.includes(s.page)&&!student())s.page='entrar';
- const pub=['inicio','entrar','recuperar','nova-senha'].includes(s.page)||(!student()&&s.page==='universidades');
+ const pub=['inicio','entrar','recuperar','nova-senha',...editorialPages].includes(s.page)||(!student()&&s.page==='universidades');
  const pages={recuperar:()=>recoveryView(s),'nova-senha':()=>recoveryView(s),inicio:home,entrar:login,painel:dashboard,perfil:profile,universidades:universities,lista:shortlist,essays:essays,sat:sat,candidaturas:applications,assistentes:assistants,documentos:documents};
- root.innerHTML=shell(s,(pages[s.page]||home)(),pub)+'<div id="notice" class="notice" role="status" hidden></div>';
+ document.title=editorialTitle(s.page)?editorialTitle(s.page)+' | MeuCampus':'MeuCampus · Sua jornada internacional';
+ root.innerHTML=shell(s,editorialPages.includes(s.page)?editorialView(s):(pages[s.page]||home)(),pub)+'<div id="notice" class="notice" role="status" hidden></div>';
  bind();
 }
 async function detail(id){
@@ -44,8 +46,8 @@ async function detail(id){
 async function saveEssay(){const form=document.querySelector('#essay-form');if(!form?.reportValidity())return false;const draft=s.essays.find(x=>x.id===s.essayId);const v=Object.fromEntries(new FormData(form));v.word_limit=Number(v.word_limit);v.university_id=v.university_id||null;v.version=draft.version+1;v.updated_at=new Date().toISOString();if(!s.demo){const rows=await unwrap(supabase.from('essays').update(v).eq('id',draft.id).eq('version',draft.version).select());if(!rows.length)throw new Error('Texto alterado em outra sessão. Copie seu rascunho antes de recarregar.');}Object.assign(draft,v);drafts.delete('essay:'+draft.id);persist();return true;}
 async function refreshDocs(){if(s.user&&!s.demo)s.docs=await unwrap(supabase.storage.from('student-documents').list(s.user.id));}
 function guarded(form,handler){form?.addEventListener('submit',async ev=>{ev.preventDefault();const buttons=[...form.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);try{await handler(ev);}catch(err){fail(err);}finally{buttons.forEach(b=>b.disabled=false);}});}
-async function action(a){
- if(a==='demo'){clearStudentContext();sessionStorage.setItem('mc-demo','1');s.demo=true;s.loading=false;s.user=null;s.country='';s.search='';s.group='';s.catalogPage=0;Object.assign(s,blank(),demoLoad());s.error='';s.universities=demoUniversities;location.hash='painel';render();}
+async function action(a,demoPage='painel'){
+ if(a==='demo'){clearStudentContext();sessionStorage.setItem('mc-demo','1');s.demo=true;s.loading=false;s.user=null;s.country='';s.search='';s.group='';s.catalogPage=0;Object.assign(s,blank(),demoLoad());s.error='';s.universities=demoUniversities;s.page=['essays','sat','candidaturas'].includes(demoPage)?demoPage:'painel';location.hash=s.page;render();}
  if(a==='retry'){s.error='';await start();return;}
  if(a==='logout'){clearStudentContext();sessionStorage.removeItem('mc-demo');if(!s.demo)await supabase.auth.signOut();Object.assign(s,blank(),{user:null,demo:false,docs:[],universities:[]});location.hash='inicio';s.universities=await catalog();}
  if(a==='new-essay'){const draft={id:crypto.randomUUID(),title:'Meu novo essay',prompt:'',content:'',word_limit:650,version:1,university_id:null};if(!s.demo)await unwrap(supabase.from('essays').insert({...draft,user_id:s.user.id}));s.essays.unshift(draft);s.essayId=draft.id;persist();render();}
@@ -70,7 +72,7 @@ function bind(){
   s.recovery=false;history.replaceState(null,'',location.pathname+'#entrar');
   s.page='entrar';render();notify('Senha atualizada. Você pode entrar com a nova senha.');
  });
- document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action).catch(fail));
+ document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b.dataset.demoPage).catch(fail));
  guarded(document.querySelector('#auth-form'),async ev=>{const revision=accountRevision;const f=new FormData(ev.target);const c={email:f.get('email'),password:f.get('password')};const {data,error}=await (ev.submitter?.value==='signup'?supabase.auth.signUp({...c,options:{emailRedirectTo:location.origin+location.pathname}}):supabase.auth.signInWithPassword(c));if(revision!==accountRevision)return;if(error)throw error;if(!data.session){notify('Confira seu e-mail para confirmar o cadastro.');return;}clearStudentContext();const activeRevision=accountRevision;sessionStorage.removeItem('mc-demo');s.user=data.user;s.demo=false;const studentData=await loadStudent(s.user.id);if(activeRevision!==accountRevision)return;Object.assign(s,studentData);const items=await catalog();if(activeRevision!==accountRevision)return;s.universities=items;location.hash=s.profile?'painel':'perfil';});
  guarded(document.querySelector('#profile-form'),async ev=>{const p=Object.fromEntries(new FormData(ev.target));for(const k of ['graduation_year','grade_average','grade_scale','sat_actual','sat_target','budget_annual','hours_week'])p[k]=p[k]===''?null:Number(p[k]);p.needs_aid=Boolean(p.needs_aid);p.ai_consent=Boolean(p.ai_consent);p.target_countries=p.target_countries.split(',').map(x=>x.trim()).filter(Boolean);p.updated_at=new Date().toISOString();validateProfile(p);if(!s.demo)await unwrap(supabase.from('student_profiles').upsert({...p,user_id:s.user.id}));s.profile=p;drafts.delete('profile');persist();location.hash='painel';});
  for(const [id,key,event] of [['search','search','input'],['country','country','change'],['institution-group','group','change'],['catalog-sort','sort','change']]){
