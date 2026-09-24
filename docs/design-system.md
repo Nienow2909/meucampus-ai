@@ -23,7 +23,7 @@ O tema está centralizado em `src/styles/clay.css`, separado da estrutura das te
 
 ## Pendências operacionais
 
-A ativação das quatro IAs foi adiada pelo usuário. A publicação automática do Supabase está preparada, mas exige configuração de credencial administrativa no GitHub. Cadastro, confirmação e recuperação por e-mail precisam de validação real após confirmar a configuração de URLs e SMTP no Supabase. Consulte `deployment.md`.
+A ativação das quatro IAs foi adiada pelo usuário. A publicação automática do Supabase está preparada, mas exige configuração de credencial administrativa no GitHub. As URLs de retorno foram configuradas e confirmadas no Supabase. SMTP próprio e validação real de cadastro, confirmação e recuperação por e-mail continuam pendentes. Consulte `deployment.md`.
 
 ## Consistência entre telas e contas
 

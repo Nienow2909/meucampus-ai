@@ -24,7 +24,7 @@ Antes de ativar para alunos, testar o modelo, limites, qualidade, citações e l
 Configure as variáveis públicas de .env.example no serviço de hospedagem. Nunca use service_role no navegador.
 Publique dist/ após npm run build. A navegação usa fragmentos (#), dispensando regras especiais de fallback para rotas.
 
-Configure no Supabase Auth a URL do site final e os redirecionamentos autorizados. Não desative confirmação de e-mail para contornar problemas de entrega.
+Em 24/09/2026, a URL publicada e os dois retornos exatos abaixo foram configurados e confirmados no painel do Supabase Auth. Não desative confirmação de e-mail para contornar problemas de entrega.
 
 ## Observações dos advisors
 
@@ -37,7 +37,7 @@ Referência: https://supabase.com/docs/guides/database/database-linter?lint=0008
 
 Sites project: appgprj_6ab3b72655688191bc70300bd15e95c8. O manifest declara saída estática em dist/. O repositório GitHub permanece a base de desenvolvimento; Sites recebe a mesma versão para hospedagem privada.
 
-A configuração da URL de retorno no Supabase Auth depende de acesso ao painel. O navegador desta sessão não estava autenticado; nenhuma configuração de proteção foi desativada. Após definir a URL do site, testar cadastro, confirmação e login com e-mail real.
+O painel do Supabase foi acessado em 24/09/2026. O Site URL foi corrigido de http://localhost:3000 para o endereço publicado. A lista de Redirect URLs foi confirmada com dois registros exatos, sem curingas. Nenhuma configuração de proteção foi desativada. Cadastro, confirmação e recuperação ainda precisam ser testados com uma conta e caixa de e-mail reais.
 
 Os PDFs completos e as credenciais não estão no Git. A auditoria e os scripts permitem reconstruir a importação a partir dos arquivos originais.
 
@@ -45,7 +45,7 @@ Os PDFs completos e as credenciais não estão no Git. A auditoria e os scripts 
 
 O frontend inclui `#recuperar` e `#nova-senha`. O envio solicita retorno para a origem atual com `/?flow=recovery`. O evento PASSWORD_RECOVERY abre a tela de nova senha; os tokens são removidos da URL. Senhas diferentes são rejeitadas antes do envio, e links sem sessão válida exibem a opção de solicitar outro link.
 
-No projeto hospedado, autorizar as URLs exatas:
+URLs exatas já salvas e confirmadas no projeto hospedado:
 - https://meucampus-ai-nienow.joao-gabril2909.chatgpt.site/
 - https://meucampus-ai-nienow.joao-gabril2909.chatgpt.site/?flow=recovery
 
@@ -63,3 +63,11 @@ Para ativar após revisão e merge no branch master:
 3. Definir a repository variable `SUPABASE_DEPLOY_ENABLED=true` para publicação automática de alterações em funções. Sem essa variável, o acionamento automático fica desativado. A execução manual só aceita master e exige a mesma credencial.
 
 Este workflow foi preparado no código; a credencial e a variável não foram configuradas, e nenhuma implantação por ele foi executada. A função já publicada no Supabase permanece na versão anteriormente verificada, com a IA desativada.
+
+## Envio de e-mail — pendência para abertura aos alunos
+
+Na leitura do painel em 24/09/2026, o SMTP personalizado estava desativado. A tela de templates informa que usa modelos padrão e requer SMTP próprio para editar assunto e corpo. Nenhuma credencial foi criada, obtida do navegador ou compartilhada.
+
+Próximo passo: configurar um serviço de envio e um remetente autorizado, inserir a credencial diretamente no painel do Supabase e validar o ciclo completo de cadastro, confirmação e recuperação em uma conta de teste controlada pelo responsável. Não declarar a entrega de e-mail como validada antes disso.
+
+O acabamento visual e os fluxos implementados estão publicados. As execuções periódicas foram pausadas após esta revisão; as pendências externas são SMTP/teste real, credencial de implantação do GitHub e abertura do acesso privado. A ativação de IA permanece explicitamente adiada.
