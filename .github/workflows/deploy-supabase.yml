@@ -1,0 +1,30 @@
+name: Publish Supabase function
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths: ['supabase/functions/**', '.github/workflows/deploy-supabase.yml']
+permissions:
+  contents: read
+concurrency:
+  group: supabase-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    # Enable only after adding the repository secret and reviewing the release.
+    if: github.ref == 'refs/heads/master' && (github.event_name == 'workflow_dispatch' || vars.SUPABASE_DEPLOY_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Check deployment credential
+        run: test -n "$SUPABASE_ACCESS_TOKEN" || { echo 'Configure SUPABASE_ACCESS_TOKEN in the production environment.'; exit 1; }
+      - run: npm ci
+      - run: npm test
+      - run: npx supabase functions deploy counselor --project-ref qfjvkidwyyhsenfgvpiy --use-api

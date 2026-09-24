@@ -1,3 +1,4 @@
+import {recoveryView} from './views/recovery.js';
 import {shell,link} from './ui/components.js';
 import {createViews} from './views/index.js';
 import {agents,groups,escapeHtml as e,nextSlot,validateProfile,wordCount,readiness} from './domain.js';
@@ -5,6 +6,10 @@ import {supabase,catalog,loadStudent,unwrap,demoUniversities,demoLoad,demoSave} 
 import {questions} from './practice.js';
 const blank=()=>({profile:null,list:[],tasks:[],essays:[],attempts:[],messages:[]});
 const s={...blank(),user:null,demo:false,universities:[],page:'inicio',agent:'universities',search:'',country:'',group:'',catalogPage:0,essayId:null,question:0,feedback:null,docs:[],error:'',busy:false,menuOpen:false,sort:'catalog',loading:false};
+s.recovery=new URLSearchParams(location.search).get('flow')==='recovery'||new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
+s.authLoading=true;
+const publicPages=['inicio','entrar','universidades','recuperar','nova-senha'];
+const routeFromLocation=()=>s.recovery?'nova-senha':location.hash.slice(1)||'inicio';
 const views=createViews(s);
 const {home,login,dashboard,profile,universities,shortlist,applications,essays,sat,assistants,documents,guideDetails}=views;
 const drafts=new Map();
@@ -14,9 +19,9 @@ const persist=()=>{if(s.demo)demoSave(Object.fromEntries(Object.keys(blank()).ma
 function notify(m){const el=document.querySelector('#notice');el.textContent=m;el.hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>el.hidden=true,7000);}
 const fail=err=>{const send=document.querySelector('#chat-form button');if(send&&!s.busy){send.textContent='Enviar ↗';send.disabled=false;}notify(err.message||'Não foi possível concluir. Tente novamente.');};
 function render(){
- if(!['inicio','entrar','universidades'].includes(s.page)&&!student())s.page='entrar';
- const pub=['inicio','entrar'].includes(s.page)||(!student()&&s.page==='universidades');
- const pages={inicio:home,entrar:login,painel:dashboard,perfil:profile,universidades:universities,lista:shortlist,essays:essays,sat:sat,candidaturas:applications,assistentes:assistants,documentos:documents};
+ if(!publicPages.includes(s.page)&&!student())s.page='entrar';
+ const pub=['inicio','entrar','recuperar','nova-senha'].includes(s.page)||(!student()&&s.page==='universidades');
+ const pages={recuperar:()=>recoveryView(s),'nova-senha':()=>recoveryView(s),inicio:home,entrar:login,painel:dashboard,perfil:profile,universidades:universities,lista:shortlist,essays:essays,sat:sat,candidaturas:applications,assistentes:assistants,documentos:documents};
  root.innerHTML=shell(s,(pages[s.page]||home)(),pub)+'<div id="notice" class="notice" role="status" hidden></div>';
  bind();
 }
@@ -44,8 +49,23 @@ async function action(a){
 function bind(){
  bindNavigation();
  bindDrafts();
+ guarded(document.querySelector('#recovery-form'),async ev=>{
+  const email=new FormData(ev.target).get('email');
+  const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname+'?flow=recovery'});
+  if(error)throw error;
+  const result=document.querySelector('#recovery-result');result.hidden=false;result.textContent='Se este e-mail estiver cadastrado, você receberá um link. Confira também a pasta de spam.';
+ });
+ guarded(document.querySelector('#reset-form'),async ev=>{
+  if(!s.user||s.demo)throw new Error('Solicite um novo link de recuperação.');
+  const f=new FormData(ev.target);
+  if(f.get('password')!==f.get('confirmation'))throw new Error('As senhas precisam ser iguais.');
+  const {error}=await supabase.auth.updateUser({password:f.get('password')});if(error)throw error;
+  ev.target.reset();
+  s.recovery=false;history.replaceState(null,'',location.pathname+'#entrar');
+  s.page='entrar';render();notify('Senha atualizada. Você pode entrar com a nova senha.');
+ });
  document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action).catch(fail));
- guarded(document.querySelector('#auth-form'),async ev=>{const f=new FormData(ev.target);const c={email:f.get('email'),password:f.get('password')};const {data,error}=await (ev.submitter?.value==='signup'?supabase.auth.signUp(c):supabase.auth.signInWithPassword(c));if(error)throw error;if(!data.session){notify('Confira seu e-mail para confirmar o cadastro.');return;}sessionStorage.removeItem('mc-demo');s.user=data.user;s.demo=false;Object.assign(s,await loadStudent(s.user.id));s.universities=await catalog();location.hash=s.profile?'painel':'perfil';});
+ guarded(document.querySelector('#auth-form'),async ev=>{const f=new FormData(ev.target);const c={email:f.get('email'),password:f.get('password')};const {data,error}=await (ev.submitter?.value==='signup'?supabase.auth.signUp({...c,options:{emailRedirectTo:location.origin+location.pathname}}):supabase.auth.signInWithPassword(c));if(error)throw error;if(!data.session){notify('Confira seu e-mail para confirmar o cadastro.');return;}sessionStorage.removeItem('mc-demo');s.user=data.user;s.demo=false;Object.assign(s,await loadStudent(s.user.id));s.universities=await catalog();location.hash=s.profile?'painel':'perfil';});
  guarded(document.querySelector('#profile-form'),async ev=>{const p=Object.fromEntries(new FormData(ev.target));for(const k of ['graduation_year','grade_average','grade_scale','sat_actual','sat_target','budget_annual','hours_week'])p[k]=p[k]===''?null:Number(p[k]);p.needs_aid=Boolean(p.needs_aid);p.ai_consent=Boolean(p.ai_consent);p.target_countries=p.target_countries.split(',').map(x=>x.trim()).filter(Boolean);p.updated_at=new Date().toISOString();validateProfile(p);if(!s.demo)await unwrap(supabase.from('student_profiles').upsert({...p,user_id:s.user.id}));s.profile=p;drafts.delete('profile');persist();location.hash='painel';});
  for(const [id,key,event] of [['search','search','input'],['country','country','change'],['institution-group','group','change'],['catalog-sort','sort','change']]){
   document.getElementById(id)?.addEventListener(event,ev=>{s[key]=ev.target.value;s.catalogPage=0;refreshCatalog();});
@@ -67,13 +87,27 @@ function bind(){
  document.querySelectorAll('[data-document]').forEach(b=>b.onclick=async()=>{try{const d=await unwrap(supabase.storage.from('student-documents').createSignedUrl(s.user.id+'/'+b.dataset.document,60));window.open(d.signedUrl,'_blank','noopener,noreferrer');}catch(err){fail(err);}});
  document.querySelectorAll('[data-delete-document]').forEach(b=>b.onclick=async()=>{if(!confirm('Excluir este arquivo?'))return;try{await unwrap(supabase.storage.from('student-documents').remove([s.user.id+'/'+b.dataset.deleteDocument]));await refreshDocs();render();}catch(err){fail(err);}});
 }
-addEventListener('hashchange',async()=>{s.menuOpen=false;document.body.classList.remove('menu-is-open');s.page=location.hash.slice(1)||'inicio';render();scrollTo(0,0);if(s.page==='documentos'){try{await refreshDocs();render();}catch(err){fail(err);}}});
+addEventListener('hashchange',async()=>{s.menuOpen=false;document.body.classList.remove('menu-is-open');s.recovery=false;s.page=location.hash.slice(1)||'inicio';render();scrollTo(0,0);if(s.page==='documentos'){try{await refreshDocs();render();}catch(err){fail(err);}}});
+supabase?.auth.onAuthStateChange((event,session)=>{
+ if(event==='PASSWORD_RECOVERY'){
+  s.recovery=true;s.authLoading=false;s.user=session?.user||null;s.demo=false;
+  sessionStorage.removeItem('mc-demo');
+  history.replaceState(null,'',location.pathname+'?flow=recovery#nova-senha');
+  s.page='nova-senha';setTimeout(render,0);
+ }
+});
 async function start(){
- if(sessionStorage.getItem('mc-demo')==='1'){s.demo=true;Object.assign(s,blank(),demoLoad());s.universities=demoUniversities;s.page=location.hash.slice(1)||'painel';render();return;}
- s.loading=true;s.page=['inicio','entrar','universidades'].includes(location.hash.slice(1))?location.hash.slice(1):'inicio';render();try{const items=await catalog();if(s.demo)return;s.universities=items;s.loading=false;
- if(supabase){const {data,error}=await supabase.auth.getSession();if(error)throw error;if(s.demo)return;s.user=data.session?.user||null;if(s.user)Object.assign(s,await loadStudent(s.user.id));}
- if(s.demo)return;s.page=location.hash.slice(1)||'inicio';render();if(s.page==='documentos'){await refreshDocs();render();}
- }catch(err){if(s.demo)return;s.loading=false;s.error='Não foi possível carregar os dados: '+err.message;render();}}
+ if(!s.recovery&&sessionStorage.getItem('mc-demo')==='1'){s.demo=true;s.authLoading=false;Object.assign(s,blank(),demoLoad());s.universities=demoUniversities;s.page=location.hash.slice(1)||'painel';render();return;}
+ s.loading=true;s.page=publicPages.includes(routeFromLocation())?routeFromLocation():'inicio';render();
+ try{
+  if(supabase){const {data,error}=await supabase.auth.getSession();if(error)throw error;if(s.demo)return;s.user=data.session?.user||null;}
+  s.authLoading=false;
+  if(s.user&&!s.recovery)Object.assign(s,await loadStudent(s.user.id));
+  if(s.demo)return;s.page=routeFromLocation();render();
+  const items=await catalog();if(s.demo)return;s.universities=items;s.loading=false;render();
+  if(s.page==='documentos'){await refreshDocs();render();}
+ }catch(err){if(s.demo)return;s.authLoading=false;s.loading=false;s.error='Não foi possível carregar os dados: '+err.message;render();}
+}
 
 function updateWordCount(){const content=document.querySelector('#essay-content');if(!content)return;const n=wordCount(content.value),limit=document.querySelector('[name=word_limit]').value;document.querySelector('#word-count').textContent=n+' / '+limit+' palavras'+(n>Number(limit)?' · acima do limite':'');}
 function bindDrafts(){
@@ -99,6 +133,7 @@ function bindNavigation(){
  document.querySelector('.skip-link')?.addEventListener('click',ev=>{ev.preventDefault();document.querySelector('main').focus();});
  document.querySelectorAll('[data-menu-toggle]').forEach(b=>b.onclick=()=>setMenu(!s.menuOpen));
  document.querySelectorAll('[data-menu-close]').forEach(b=>b.onclick=()=>setMenu(false));
+ document.querySelectorAll('.sidebar nav a').forEach(a=>a.addEventListener('click',()=>{if(s.menuOpen)setMenu(false);}));
 }
 addEventListener('keydown',ev=>{
  if(!s.menuOpen)return;

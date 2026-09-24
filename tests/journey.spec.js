@@ -13,7 +13,7 @@ test('jornada internacional: perfil, lista 3/4/5, essay, tarefa e SAT',async({pa
  await page.getByLabel('SAT realizado',{exact:true}).fill('1250');
  await page.getByLabel('Meta de SAT',{exact:true}).fill('1450');
  await page.getByRole('button',{name:'Salvar meu perfil'}).click();
- await expect(page.getByRole('heading',{name:'Olá, Ana ✦'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Olá, Ana'})).toBeVisible();
  await page.getByRole('link',{name:'Universidades',exact:true}).click();
  for(let i=0;i<12;i++){
   await page.getByRole('button',{name:'Explorar e escolher'}).nth(i).click();

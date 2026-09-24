@@ -3,7 +3,7 @@ import {icon} from './icons.js';
 
 export const link = (page, label, cls = 'button') => `<a class="${cls}" href="#${page}">${label}</a>`;
 export const chip = text => `<span class="chip">${e(text)}</span>`;
-export const empty = (title, body) => `<div class="empty"><span class="empty-icon">${icon('sparkle')}</span><h3>${title}</h3><p>${body}</p></div>`;
+export const empty = (title, body) => `<div class="empty"><span class="empty-icon">${icon('folder')}</span><h3>${title}</h3><p>${body}</p></div>`;
 export const head = (label, title, description, action = '') => `<div class="page-heading"><div><span class="eyebrow">${label}</span><h1>${title}</h1><p>${description}</p></div>${action}</div>`;
 export const brand = () => `<a class="brand" href="#inicio" aria-label="MeuCampus, início"><b>m<span>↗</span></b><span>meucampus<small>SEU FUTURO, MAIS PERTO</small></span></a>`;
 
@@ -15,14 +15,14 @@ export const navigation = [
   ['essays', 'pen', 'Essays'],
   ['sat', 'chart', 'Estudar SAT'],
   ['candidaturas', 'check', 'Candidaturas'],
-  ['assistentes', 'sparkle', 'Assistentes'],
+  ['assistentes', 'user', 'Assistentes'],
   ['documentos', 'folder', 'Documentos'],
 ];
 
 export function shell(s, content, isPublic) {
   const current = navigation.find(([id]) => id === s.page)?.[2] || 'Seu espaço';
   const links = navigation.map(([id, glyph, label], index) => `${index === 4 ? '<div class="nav-label">SUA PREPARAÇÃO</div>' : ''}<a href="#${id}" aria-label="${label}" ${s.page === id ? 'aria-current="page"' : ''} class="${s.page === id ? 'active' : ''}">${icon(glyph)}<span>${label}</span>${id === 'lista' ? `<small>${s.list.length}/12</small>` : ''}</a>`).join('');
-  return `<a class="skip-link" href="#main-content">Pular para o conteúdo</a><div class="${isPublic ? 'public-shell' : 'app-shell'} ${s.menuOpen ? 'menu-open' : ''}">
+  return `<div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div><a class="skip-link" href="#main-content">Pular para o conteúdo</a><div class="${isPublic ? 'public-shell' : 'app-shell'} ${s.menuOpen ? 'menu-open' : ''}">
     ${isPublic ? `<header class="public-header">${brand()}<div class="header-links">${link('universidades', 'Explorar universidades', 'text-link')}${link(s.user || s.demo ? 'painel' : 'entrar', s.user || s.demo ? 'Meu painel' : 'Entrar', 'button primary')}</div></header>` : `
     <button class="menu-scrim" data-menu-close aria-label="Fechar menu" tabindex="-1"></button>
     <aside class="sidebar" id="main-navigation" aria-label="Menu principal"><div class="sidebar-brand">${brand()}<button class="icon-button mobile-only" data-menu-close aria-label="Fechar menu">${icon('close')}</button></div>

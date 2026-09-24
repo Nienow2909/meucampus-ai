@@ -40,3 +40,26 @@ Sites project: appgprj_6ab3b72655688191bc70300bd15e95c8. O manifest declara saí
 A configuração da URL de retorno no Supabase Auth depende de acesso ao painel. O navegador desta sessão não estava autenticado; nenhuma configuração de proteção foi desativada. Após definir a URL do site, testar cadastro, confirmação e login com e-mail real.
 
 Os PDFs completos e as credenciais não estão no Git. A auditoria e os scripts permitem reconstruir a importação a partir dos arquivos originais.
+
+## Recuperação de senha e retorno do cadastro
+
+O frontend inclui `#recuperar` e `#nova-senha`. O envio solicita retorno para a origem atual com `/?flow=recovery`. O evento PASSWORD_RECOVERY abre a tela de nova senha; os tokens são removidos da URL. Senhas diferentes são rejeitadas antes do envio, e links sem sessão válida exibem a opção de solicitar outro link.
+
+No projeto hospedado, autorizar as URLs exatas:
+- https://meucampus-ai-nienow.joao-gabril2909.chatgpt.site/
+- https://meucampus-ai-nienow.joao-gabril2909.chatgpt.site/?flow=recovery
+
+O callback do cadastro usa a primeira URL. A recuperação usa a segunda. Os testes interceptam a API: nenhum e-mail foi enviado para terceiros durante os testes. A validação de entrega, expiração e uso do link em uma conta real continua pendente. O acesso privado do Sites também precisa ser considerado antes de abrir a plataforma a alunos.
+
+Referências: [recuperação de senha](https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail) e [eventos de autenticação](https://supabase.com/docs/reference/javascript/auth-onauthstatechange).
+
+## Publicação pelo GitHub
+
+O workflow `.github/workflows/deploy-supabase.yml` publica somente a função `counselor`, com verificação JWT preservada. Ele executa testes antes de publicar e nunca altera secrets de IA nem aplica migrações automaticamente.
+
+Para ativar após revisão e merge no branch master:
+1. Criar o environment `production` no GitHub e configurar as proteções desejadas.
+2. Adicionar nesse environment o secret `SUPABASE_ACCESS_TOKEN`, uma credencial administrativa do Supabase. Não é a chave da IA; nunca adicioná-la a arquivos ou ao chat.
+3. Definir a repository variable `SUPABASE_DEPLOY_ENABLED=true` para publicação automática de alterações em funções. Sem essa variável, o acionamento automático fica desativado. A execução manual só aceita master e exige a mesma credencial.
+
+Este workflow foi preparado no código; a credencial e a variável não foram configuradas, e nenhuma implantação por ele foi executada. A função já publicada no Supabase permanece na versão anteriormente verificada, com a IA desativada.

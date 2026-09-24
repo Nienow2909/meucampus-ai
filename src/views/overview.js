@@ -3,19 +3,19 @@ import {head, link} from '../ui/components.js';
 import {icon} from '../ui/icons.js';
 
 export function homeView(s) {
-  return `<section class="landing"><div class="landing-copy"><span class="eyebrow"><span class="status-dot"></span> DO BRASIL PARA O SEU PRÓXIMO CAPÍTULO</span>
-    <h1>Um mundo lá fora.<br><em>Um caminho seu.</em></h1>
-    <p>Encontre as universidades que fazem sentido para você. Organize suas escolhas e transforme a vontade de estudar fora em próximos passos.</p>
+  return `<section class="landing"><div class="landing-copy"><span class="eyebrow">ESTUDAR FORA COMEÇA COM UM PLANO</span>
+    <h1>Seu futuro.<br>Suas escolhas.<br><em>Um bom plano.</em></h1>
+    <p>Da primeira pesquisa à candidatura: encontre universidades, organize seus prazos e prepare sua história. Tudo no seu ritmo.</p>
     <div class="actions">${link('universidades', `Explorar universidades ${icon('arrow')}`, 'button primary')}<button class="button secondary" data-action="demo">Explorar demonstração</button></div>
     <div class="landing-proof"><span>${icon('school')} 400 instituições no catálogo</span><span>${icon('globe')} Estados Unidos e Canadá</span></div>
   </div><div class="journey-preview" aria-label="Sua jornada: perfil, universidades e preparação"><div class="preview-bar"><span class="mini-brand">m↗</span><b>Seu próximo capítulo</b><span class="chip green">Começa aqui</span></div>
-    <div class="preview-title"><span class="eyebrow">SEU MAPA DE POSSIBILIDADES</span><h2>Grandes sonhos.<br>Um plano de cada vez.</h2></div>
+    <div class="preview-title"><span class="eyebrow">SEU MAPA DE POSSIBILIDADES</span><h2>Da ideia à<br>candidatura.</h2></div>
     <div class="journey-stops"><div><span class="step-icon">${icon('user')}</span><section><small>01 · PONTO DE PARTIDA</small><h3>Sua história e seus objetivos</h3><p>Notas, interesses e experiências.</p></section><span class="step-check">${icon('check')}</span></div>
     <div><span class="step-icon violet">${icon('school')}</span><section><small>02 · SEUS DESTINOS</small><h3>12 escolhas com intenção</h3><div class="preview-groups"><span><b>3</b> sonho</span><span><b>4</b> possíveis</span><span><b>5</b> mais acessíveis</span></div></section></div>
     <div><span class="step-icon">${icon('pen')}</span><section><small>03 · PRÓXIMOS PASSOS</small><h3>Prepare sua candidatura</h3><p>Essays, SAT e organização, juntos.</p></section></div></div>
-    <div class="preview-footer">${icon('sparkle')} Orientação que acompanha seu momento.</div>
+    <div class="preview-footer">${icon('bookmark')} Suas escolhas, reunidas em um só lugar.</div>
   </div></section>
-  <section class="landing-features" aria-label="Suas ferramentas">${Object.entries(agents).map(([key,[name,description]],i)=>`<article><span class="feature-icon feature-${i}">${icon(['school','pen','chart','check'][i])}</span><h3>${name}</h3><p>${description}</p></article>`).join('')}</section>
+  <section class="landing-features" aria-label="Suas ferramentas">${Object.entries(agents).map(([key,[name,description]],i)=>`<article><span class="feature-index">0${i+1}</span><span class="feature-icon feature-${i}">${icon(['school','pen','chart','check'][i])}</span><h3>${name}</h3><p>${description}</p></article>`).join('')}</section>
   <footer><span>MeuCampus AI · Sua jornada internacional.</span><span>Orientação com fontes. Sem promessa de aprovação.</span></footer>`;
 }
 
@@ -24,7 +24,7 @@ export function dashboardView(s, taskList) {
   const done = s.tasks.filter(t=>t.done).length;
   const next = !s.profile ? ['perfil','Vamos começar por você.','Conte sua história, suas experiências e o que você procura em uma universidade.','Completar meu perfil'] : s.list.length < 12 ? ['universidades','Seu próximo destino está aqui.','Explore o catálogo e encontre as opções que combinam com o que você quer construir.','Explorar universidades'] : ['candidaturas','Suas escolhas viraram um plano.','Organize prazos e acompanhe as próximas ações para cada universidade da sua lista.','Organizar minha candidatura'];
   const pending = [...s.tasks].filter(t=>!t.done).sort((a,b)=>(a.due_on || '9999').localeCompare(b.due_on || '9999'));
-  return `${head('SEU ESPAÇO PARA IR MAIS LONGE',`Olá, ${e(s.profile?.full_name?.split(' ')[0]||'viajante')} <span class="greeting-star">✦</span>`,'Cada pequeno passo abre uma nova possibilidade.',link('perfil',`${icon('user')} Atualizar meu perfil`,'button secondary'))}
+  return `${head('SEU ESPAÇO PARA IR MAIS LONGE',`Olá, ${e(s.profile?.full_name?.split(' ')[0]||'estudante')}`,'Veja suas escolhas, seu progresso e o que fazer a seguir.',link('perfil',`${icon('user')} Atualizar meu perfil`,'button secondary'))}
     <div class="dashboard-grid"><section class="dashboard-hero"><span class="eyebrow">SEU PRÓXIMO PASSO</span><h2>${next[1]}</h2><p>${next[2]}</p>${link(next[0],`${next[3]} ${icon('arrow')}`,'button lime')}<span class="hero-orbit orbit-one" aria-hidden="true"></span><span class="hero-orbit orbit-two" aria-hidden="true"></span><span class="hero-star" aria-hidden="true">✦</span></section>
     <section class="panel profile-summary"><div class="section-title"><span class="eyebrow">SEU PONTO DE PARTIDA</span>${icon('user')}</div><div class="progress-ring" style="--progress:${progress}%" role="progressbar" aria-label="Perfil preenchido" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"><span><b>${progress}<small>%</small></b><small>do perfil preenchido</small></span></div><p>${progress===100?'Seu contexto está pronto. Atualize sempre que algo mudar.':'Quanto mais você conta, mais contexto tem para suas escolhas.'}</p>${link('perfil','Continuar meu perfil →','text-link')}</section></div>
     <div class="metric-grid"><article><div class="metric-heading"><span>MINHAS ESCOLHAS</span>${icon('bookmark')}</div><strong>${s.list.length}<small> / 12</small></strong><small>Seu mapa de universidades</small></article><article><div class="metric-heading"><span>MEU SAT ATUAL</span>${icon('chart')}</div><strong>${s.profile?.sat_actual??'—'}</strong><small>Meta: ${s.profile?.sat_target??'a definir'} · cenário futuro</small></article><article><div class="metric-heading"><span>AÇÕES CONCLUÍDAS</span>${icon('check')}</div><strong>${done}<small> / ${s.tasks.length}</small></strong><small>Progresso do plano, não chance de admissão</small></article></div>
