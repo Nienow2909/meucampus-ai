@@ -13,6 +13,12 @@ const routeFromLocation=()=>s.recovery?'nova-senha':location.hash.slice(1)||'ini
 const views=createViews(s);
 const {home,login,dashboard,profile,universities,shortlist,applications,essays,sat,assistants,documents,guideDetails}=views;
 const drafts=new Map();
+let accountRevision=0;
+function clearStudentContext(){
+ accountRevision++;
+ drafts.clear();
+ Object.assign(s,blank(),{docs:[],essayId:null,question:0,feedback:null,pendingQuestion:'',busy:false});
+}
 const root=document.querySelector('#app');
 const student=()=>Boolean(s.user||s.demo);
 const persist=()=>{if(s.demo)demoSave(Object.fromEntries(Object.keys(blank()).map(k=>[k,s[k]])));};
@@ -39,9 +45,9 @@ async function saveEssay(){const form=document.querySelector('#essay-form');if(!
 async function refreshDocs(){if(s.user&&!s.demo)s.docs=await unwrap(supabase.storage.from('student-documents').list(s.user.id));}
 function guarded(form,handler){form?.addEventListener('submit',async ev=>{ev.preventDefault();const buttons=[...form.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);try{await handler(ev);}catch(err){fail(err);}finally{buttons.forEach(b=>b.disabled=false);}});}
 async function action(a){
- if(a==='demo'){sessionStorage.setItem('mc-demo','1');s.demo=true;s.loading=false;s.user=null;s.country='';s.search='';s.group='';s.catalogPage=0;Object.assign(s,blank(),demoLoad());s.error='';s.universities=demoUniversities;location.hash='painel';render();}
+ if(a==='demo'){clearStudentContext();sessionStorage.setItem('mc-demo','1');s.demo=true;s.loading=false;s.user=null;s.country='';s.search='';s.group='';s.catalogPage=0;Object.assign(s,blank(),demoLoad());s.error='';s.universities=demoUniversities;location.hash='painel';render();}
  if(a==='retry'){s.error='';await start();return;}
- if(a==='logout'){drafts.clear();s.pendingQuestion='';sessionStorage.removeItem('mc-demo');if(!s.demo)await supabase.auth.signOut();Object.assign(s,blank(),{user:null,demo:false,docs:[],universities:[]});location.hash='inicio';s.universities=await catalog();}
+ if(a==='logout'){clearStudentContext();sessionStorage.removeItem('mc-demo');if(!s.demo)await supabase.auth.signOut();Object.assign(s,blank(),{user:null,demo:false,docs:[],universities:[]});location.hash='inicio';s.universities=await catalog();}
  if(a==='new-essay'){const draft={id:crypto.randomUUID(),title:'Meu novo essay',prompt:'',content:'',word_limit:650,version:1,university_id:null};if(!s.demo)await unwrap(supabase.from('essays').insert({...draft,user_id:s.user.id}));s.essays.unshift(draft);s.essayId=draft.id;persist();render();}
  if(a==='essay-feedback'&&await saveEssay()){const draft=s.essays.find(x=>x.id===s.essayId);if(draft.content.length>4500)throw new Error('Essay salvo. Para feedback, envie um trecho de até 4.500 caracteres ao mentor.');s.agent='essays';s.pendingQuestion='Revise clareza, estrutura e autenticidade. Não invente experiências. Enunciado: '+draft.prompt.slice(0,700)+'\nTexto: '+draft.content;location.hash='assistentes';}
  if(a==='next-question'){s.question=(s.question+1)%questions.length;s.feedback=null;render();}
@@ -65,7 +71,7 @@ function bind(){
   s.page='entrar';render();notify('Senha atualizada. Você pode entrar com a nova senha.');
  });
  document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action).catch(fail));
- guarded(document.querySelector('#auth-form'),async ev=>{const f=new FormData(ev.target);const c={email:f.get('email'),password:f.get('password')};const {data,error}=await (ev.submitter?.value==='signup'?supabase.auth.signUp({...c,options:{emailRedirectTo:location.origin+location.pathname}}):supabase.auth.signInWithPassword(c));if(error)throw error;if(!data.session){notify('Confira seu e-mail para confirmar o cadastro.');return;}sessionStorage.removeItem('mc-demo');s.user=data.user;s.demo=false;Object.assign(s,await loadStudent(s.user.id));s.universities=await catalog();location.hash=s.profile?'painel':'perfil';});
+ guarded(document.querySelector('#auth-form'),async ev=>{const revision=accountRevision;const f=new FormData(ev.target);const c={email:f.get('email'),password:f.get('password')};const {data,error}=await (ev.submitter?.value==='signup'?supabase.auth.signUp({...c,options:{emailRedirectTo:location.origin+location.pathname}}):supabase.auth.signInWithPassword(c));if(revision!==accountRevision)return;if(error)throw error;if(!data.session){notify('Confira seu e-mail para confirmar o cadastro.');return;}clearStudentContext();const activeRevision=accountRevision;sessionStorage.removeItem('mc-demo');s.user=data.user;s.demo=false;const studentData=await loadStudent(s.user.id);if(activeRevision!==accountRevision)return;Object.assign(s,studentData);const items=await catalog();if(activeRevision!==accountRevision)return;s.universities=items;location.hash=s.profile?'painel':'perfil';});
  guarded(document.querySelector('#profile-form'),async ev=>{const p=Object.fromEntries(new FormData(ev.target));for(const k of ['graduation_year','grade_average','grade_scale','sat_actual','sat_target','budget_annual','hours_week'])p[k]=p[k]===''?null:Number(p[k]);p.needs_aid=Boolean(p.needs_aid);p.ai_consent=Boolean(p.ai_consent);p.target_countries=p.target_countries.split(',').map(x=>x.trim()).filter(Boolean);p.updated_at=new Date().toISOString();validateProfile(p);if(!s.demo)await unwrap(supabase.from('student_profiles').upsert({...p,user_id:s.user.id}));s.profile=p;drafts.delete('profile');persist();location.hash='painel';});
  for(const [id,key,event] of [['search','search','input'],['country','country','change'],['institution-group','group','change'],['catalog-sort','sort','change']]){
   document.getElementById(id)?.addEventListener(event,ev=>{s[key]=ev.target.value;s.catalogPage=0;refreshCatalog();});
@@ -90,6 +96,7 @@ function bind(){
 addEventListener('hashchange',async()=>{s.menuOpen=false;document.body.classList.remove('menu-is-open');s.recovery=false;s.page=location.hash.slice(1)||'inicio';render();scrollTo(0,0);if(s.page==='documentos'){try{await refreshDocs();render();}catch(err){fail(err);}}});
 supabase?.auth.onAuthStateChange((event,session)=>{
  if(event==='PASSWORD_RECOVERY'){
+  clearStudentContext();
   s.recovery=true;s.authLoading=false;s.user=session?.user||null;s.demo=false;
   sessionStorage.removeItem('mc-demo');
   history.replaceState(null,'',location.pathname+'?flow=recovery#nova-senha');
@@ -98,15 +105,16 @@ supabase?.auth.onAuthStateChange((event,session)=>{
 });
 async function start(){
  if(!s.recovery&&sessionStorage.getItem('mc-demo')==='1'){s.demo=true;s.authLoading=false;Object.assign(s,blank(),demoLoad());s.universities=demoUniversities;s.page=location.hash.slice(1)||'painel';render();return;}
+ let revision=accountRevision;
  s.loading=true;s.page=publicPages.includes(routeFromLocation())?routeFromLocation():'inicio';render();
  try{
-  if(supabase){const {data,error}=await supabase.auth.getSession();if(error)throw error;if(s.demo)return;s.user=data.session?.user||null;}
+  if(supabase){const {data,error}=await supabase.auth.getSession();if(error)throw error;if(s.demo||revision!==accountRevision&&!s.recovery)return;if(s.recovery)revision=accountRevision;s.user=data.session?.user||null;}
   s.authLoading=false;
-  if(s.user&&!s.recovery)Object.assign(s,await loadStudent(s.user.id));
+  if(s.user&&!s.recovery){const studentData=await loadStudent(s.user.id);if(revision!==accountRevision)return;Object.assign(s,studentData);}
   if(s.demo)return;s.page=routeFromLocation();render();
-  const items=await catalog();if(s.demo)return;s.universities=items;s.loading=false;render();
+  const items=await catalog();if(s.demo||revision!==accountRevision)return;s.universities=items;s.loading=false;if(s.page==='universidades'){refreshCatalogOptions();refreshCatalog();}
   if(s.page==='documentos'){await refreshDocs();render();}
- }catch(err){if(s.demo)return;s.authLoading=false;s.loading=false;s.error='Não foi possível carregar os dados: '+err.message;render();}
+ }catch(err){if(s.demo||revision!==accountRevision)return;s.authLoading=false;s.loading=false;s.error='Não foi possível carregar os dados: '+err.message;render();}
 }
 
 function updateWordCount(){const content=document.querySelector('#essay-content');if(!content)return;const n=wordCount(content.value),limit=document.querySelector('[name=word_limit]').value;document.querySelector('#word-count').textContent=n+' / '+limit+' palavras'+(n>Number(limit)?' · acima do limite':'');}
@@ -117,6 +125,14 @@ function bindDrafts(){
  if(saved)for(const field of form.elements){if(field.name&&Object.hasOwn(saved,field.name)){if(field.type==='checkbox')field.checked=saved[field.name];else field.value=saved[field.name];}}
  updateWordCount();
  form.addEventListener('input',()=>{const values={};for(const field of form.elements)if(field.name)values[field.name]=field.type==='checkbox'?field.checked:field.value;drafts.set(key,values);});
+}
+function refreshCatalogOptions(){
+ for(const [id,field,key,placeholder] of [['country','country','country','Todos os países'],['institution-group','institutional_group','group','Todos os tipos']]){
+  const select=document.getElementById(id);if(!select)continue;
+  const values=[...new Set(s.universities.map(u=>u[field]).filter(Boolean))].sort();
+  select.replaceChildren(new Option(placeholder,''),...values.map(value=>new Option(value,value)));
+  select.value=s[key];
+ }
 }
 function refreshCatalog(){const target=document.querySelector('#catalog-results');if(target){target.innerHTML=views.catalogResults();bindCatalog();}}
 function bindCatalog(){

@@ -19,8 +19,12 @@ O tema está centralizado em `src/styles/clay.css`, separado da estrutura das te
 
 ## Verificação
 
-11 testes unitários e 13 testes de navegador locais passaram. A verificação adicional do catálogo real confirmou 400 instituições. Testes de layout cobrem 320, 390, 768 e 1024 px; capturas de desktop em 1440 px e de celular foram inspecionadas. Testes de autenticação usam respostas simuladas: não comprovam entrega de e-mail em produção.
+11 testes unitários e 15 testes de navegador locais passaram. A verificação adicional do catálogo real confirmou 400 instituições. Testes de layout cobrem 320, 390, 768 e 1024 px; capturas de desktop em 1440 px e de celular foram inspecionadas. Testes de autenticação usam respostas simuladas: não comprovam entrega de e-mail em produção.
 
 ## Pendências operacionais
 
 A ativação das quatro IAs foi adiada pelo usuário. A publicação automática do Supabase está preparada, mas exige configuração de credencial administrativa no GitHub. Cadastro, confirmação e recuperação por e-mail precisam de validação real após confirmar a configuração de URLs e SMTP no Supabase. Consulte `deployment.md`.
+
+## Consistência entre telas e contas
+
+O carregamento tardio do catálogo atualiza somente os resultados e filtros, preservando campos de login já preenchidos e o foco. Ao entrar em uma conta ou iniciar a demonstração, rascunhos e estados temporários anteriores são descartados. Respostas de carregamento de perfil iniciadas antes dessa troca não substituem o contexto atual. Testes com a API simulada cobrem preservação de credenciais digitadas e isolamento do rascunho de demonstração.

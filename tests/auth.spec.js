@@ -16,6 +16,44 @@ test('recovery requests the correct redirect without revealing account existence
   expect(new URL(request.url()).searchParams.get('redirect_to')).toBe('http://127.0.0.1:5173/?flow=recovery');
 });
 
+test('late catalog response preserves the email and password already entered',async({page})=>{
+  let release,requested;
+  const pending=new Promise(resolve=>release=resolve);
+  const started=new Promise(resolve=>requested=resolve);
+  await page.route('**/rest/v1/universities?*',async route=>{
+    requested();await pending;await route.fulfill({json:[]});
+  });
+  await page.goto('/#entrar');await started;
+  const email=page.getByLabel('E-mail',{exact:true});
+  await email.fill('aluno@example.com');
+  await page.getByLabel('Senha',{exact:true}).fill('senha-teste-123');
+  await email.focus();
+  const response=page.waitForResponse('**/rest/v1/universities?*');
+  release();await response;
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  await expect(email).toHaveValue('aluno@example.com');
+  await expect(email).toBeFocused();
+  await expect(page.getByLabel('Senha',{exact:true})).toHaveValue('senha-teste-123');
+});
+
+test('signing into an account discards unsaved demo profile drafts',async({page})=>{
+  const user={id:'22222222-2222-4222-8222-222222222222',aud:'authenticated',role:'authenticated',email:'conta@example.com',app_metadata:{},user_metadata:{}};
+  await page.route('**/auth/v1/token?*',route=>route.fulfill({json:{user,access_token:'test-token',refresh_token:'test-refresh',token_type:'bearer',expires_in:3600}}));
+  await page.route('**/rest/v1/student_profiles?*',route=>route.fulfill({json:{user_id:user.id,full_name:'Perfil da conta',school_year:'3º ano',interest:'Design'}}));
+  await page.goto('/');
+  await page.getByRole('button',{name:'Explorar demonstração',exact:true}).click();
+  await page.getByRole('link',{name:'Meu perfil',exact:true}).click();
+  await page.getByLabel('Nome *',{exact:true}).fill('Rascunho da demonstração');
+  await page.evaluate(()=>location.hash='entrar');
+  await page.getByLabel('E-mail',{exact:true}).fill(user.email);
+  await page.getByLabel('Senha',{exact:true}).fill('senha-teste-123');
+  await page.getByRole('button',{name:'Entrar →',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Olá, Perfil'})).toBeVisible();
+  await page.getByRole('link',{name:'Meu perfil',exact:true}).click();
+  await expect(page.getByLabel('Nome *',{exact:true})).toHaveValue('Perfil da conta');
+  await expect(page.locator('.demo-banner')).toHaveCount(0);
+});
+
 test('expired recovery link never exposes a password update form',async({page})=>{
   await page.goto('/?flow=recovery#nova-senha');
   await expect(page.getByRole('heading',{name:'Solicite um novo link'})).toBeVisible();
