@@ -1,12 +1,8 @@
-# Autorização e privacidade
+# Acesso
 
-- Sessão é a única origem de identidade para rotas privadas.
-- Estudante: CRUD dos próprios dados e compartilhamento explícito.
-- Responsável: leitura limitada ao estudante vinculado e autorizado; sem editar essays por padrão.
-- Orientador: escopos selecionáveis por estudante, com expiração e revogação.
-- Administrador: sem acesso a conteúdo privado por padrão; ações de fonte e segurança separadas e auditadas.
-- Documentos: links temporários, acesso mínimo, expiração e exclusão cascata conforme retenção.
-- Analytics: eventos sem essays, documentos ou respostas completas.
-- Menores: consentimento de responsável antes de recursos que exigem compartilhamento.
-- Exclusão e exportação: disponíveis na conta, com confirmação e log.
-- Toda alteração relevante usa `expectedVersion` para evitar sobrescrita silenciosa.
+Cada aluno pode ler/escrever somente seus próprios registros, conforme RLS com USING e WITH CHECK.
+Catálogo publicado e fontes verificadas são públicos para leitura; publicação exige serviço administrativo.
+O aluno não pode escrever histórico de assistente, consumir a cota em nome de outra pessoa ou transferir seus registros.
+Documentos têm caminho {user_id}/{uuid}-{nome}, bucket privado e URLs de 60 segundos.
+Frontend não contém service role nem credencial de IA.
+Nesta versão, não há papéis de responsável/orientador, compartilhamento, exportação nem exclusão integral de conta. Esses fluxos precisam de implementação antes de oferecer tais recursos.

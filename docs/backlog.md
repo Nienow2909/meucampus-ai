@@ -1,26 +1,12 @@
-# Backlog por fase
+# Próximas entregas
 
-## Fase 1 — MVP
+1. Revisar oficialmente requisitos e prazos das 400 instituições já importadas, por ciclo e público.
+2. Configurar provedor de IA e validar respostas específicas por especialidade.
+3. Expandir SAT de quatro exercícios iniciais para banco revisado e diagnóstico adaptativo.
+4. Adicionar notas por matéria/ano e atividades estruturadas.
+5. Painel editorial, alertas de prazo e atualização de fontes.
+6. Histórico completo de versões de essays e exportação/exclusão de conta. Recuperação implementada e entrega confirmada ao endereço autorizado; falta validar uma redefinição real completa.
+7. Configurar domínio/Auth e concluir cadastro e e-mail com contas reais antes de abrir a versão privada aos alunos.
+8. Probabilidades de admissão somente após obter dados históricos e validar o modelo.
 
-- [x] Landing, ferramentas, planos e aviso de orientação.
-- [x] Onboarding, perfil, dashboard e tarefas demonstrativas.
-- [x] Busca, filtros, favoritos e lista sonho/compatível/segura.
-- [x] Calendário, fontes, agente demonstrativo e privacidade.
-- [ ] Backend real com sessão, RLS e testes de autorização.
-- [ ] Uma ferramenta ENEM com fórmula e fonte oficial.
-
-## Fase 2 — candidatura
-
-- [x] Estrutura visual de redações, checklist e documentos.
-- [ ] Editor com versões persistentes, prompts por ciclo e revisão citável.
-- [ ] Cartas, atividades, esporte, projetos e bolsas reais.
-- [ ] Comparador de cursos e alertas de fontes.
-
-## Fase 3 — expansão
-
-- [ ] Equivalências AP, IB, testes de inglês e vestibulares.
-- [ ] NCAA e recrutamento esportivo com fonte oficial.
-- [ ] Portais de responsável e orientador com escopo.
-- [ ] Importação segura de documentos.
-- [ ] Atualização automática com aprovação humana.
-- [ ] Checkout em modo de teste e planos recorrentes.
+O fluxo atual oferece regras de progresso e requisitos documentados, sem percentuais artificiais de admissão.

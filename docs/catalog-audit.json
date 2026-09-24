@@ -1,0 +1,53 @@
+{
+  "universities": 400,
+  "countries": {
+    "Canadá": 24,
+    "Estados Unidos": 376
+  },
+  "sources": 1000,
+  "knowledge_chunks": 3334,
+  "canonical_document": "Estudar nos EUA  guia completo + radar das 200 universidades.pdf",
+  "pdfs": [
+    {
+      "file": "Radar das 200 melhores universidades da América do Norte.pdf",
+      "sha256": "d22d8f49b8e28fc5082892c7cf2b02b9c4aaa03785c3c7070952192f9bb12497",
+      "pages": 900,
+      "chars": 3824984,
+      "links": 6070
+    },
+    {
+      "file": "Estudar nos EUA  guia completo + radar das 200 universidades.pdf",
+      "sha256": "0909e47caf9b36285f18a403e78a826b1bf55583048bc874908c40b9812772c1",
+      "pages": 1635,
+      "chars": 7423379,
+      "links": 9933
+    },
+    {
+      "file": "Estudar nos EUA  guia completo + radar das 200 universidades (PDF).pdf",
+      "sha256": "84a6fdca4ada7e5e8c9fe9b5223ccf3f5650d626e22c0d9b7e7335162569476f",
+      "pages": 1580,
+      "chars": 7669743,
+      "links": 10471
+    }
+  ],
+  "missing": {
+    "rank": 0,
+    "universidade": 0,
+    "conjunto": 0,
+    "grupo_ou_arquetipo": 0,
+    "pais": 0,
+    "taxa_admissao_pct": 5,
+    "sat_piso": 17,
+    "sat_meta": 17,
+    "media_br_alvo": 0,
+    "nivel_extracurricular": 0,
+    "alavanca_principal": 0,
+    "fonte_nota": 59
+  },
+  "officially_verified": 0,
+  "notes": [
+    "CSV adicional já está contido nas 400 linhas do funil.",
+    "Nenhuma meta editorial foi convertida em requisito obrigatório.",
+    "Os três PDFs são versões sobrepostas; somente o guia completo de 1.635 páginas alimenta a recuperação, evitando triplicar evidências."
+  ]
+}

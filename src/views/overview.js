@@ -1,0 +1,42 @@
+import {agents, groups, escapeHtml as e, profileProgress} from '../domain.js';
+import {head, link} from '../ui/components.js';
+import {icon} from '../ui/icons.js';
+import {homeClosing} from './editorial.js';
+
+export function homeView(s) {
+  const tools = [
+    {page:'universidades',icon:'school',title:'Encontre seu lugar.',description:'Compare áreas e consulte as fontes de cada instituição antes de montar sua lista.',label:'Conhecer o catálogo',meta:'400 instituições · EUA e Canadá',detail:'<div class="choice-preview" aria-label="Estratégia de lista: 3 sonho, 4 possíveis e 5 mais acessíveis"><span><b>3</b> sonho</span><span><b>4</b> possíveis</span><span><b>5</b> mais acessíveis</span></div>'},
+    {page:'essays',icon:'pen',title:'Sua história, bem contada.',description:'Guarde ideias, desenvolva o texto e acompanhe o limite de palavras.',label:'Abrir espaço de escrita',meta:'Rascunhos e contagem de palavras'},
+    {page:'sat',icon:'chart',title:'Um estudo de cada vez.',description:'Resolva um exercício, confira a explicação e entenda onde melhorar.',label:'Experimentar uma questão',meta:'4 exercícios autorais para começar'},
+    {page:'candidaturas',icon:'check',title:'Do plano ao próximo passo.',description:'Organize tarefas e datas por universidade. Tudo o que precisa sair do papel, em um só lugar.',label:'Conhecer meu plano',meta:'Prazos, tarefas e escolhas reunidos',detail:'<div class="plan-preview" aria-label="Exemplos de tarefas"><span><i aria-hidden="true"></i> Separar o histórico escolar</span><span><i aria-hidden="true"></i> Revisar o primeiro essay</span></div>'},
+  ];
+  return `<section class="landing"><div class="landing-copy"><span class="eyebrow">ESTUDAR FORA COMEÇA COM UM PLANO</span>
+    <h1>Seu futuro.<br>Suas escolhas.<br><em>Um bom plano.</em></h1>
+    <p>Da primeira pesquisa à candidatura: encontre universidades, organize seus prazos e prepare sua história. Tudo no seu ritmo.</p>
+    <div class="actions">${link('universidades', `Explorar universidades ${icon('arrow')}`, 'button primary')}<button class="button secondary" data-action="demo">Explorar demonstração</button></div>
+    <p class="demo-caption">Teste as ferramentas sem criar uma conta.</p>
+    <div class="landing-proof"><span>${icon('school')} 400 instituições no catálogo</span><span>${icon('globe')} Estados Unidos e Canadá</span></div>
+  </div><div class="journey-preview" aria-label="Sua jornada: perfil, universidades e preparação"><div class="preview-bar"><span class="mini-brand">m↗</span><b>Seu próximo capítulo</b><span class="chip green">Começa aqui</span></div>
+    <div class="preview-title"><span class="eyebrow">SEU MAPA DE POSSIBILIDADES</span><h2>Da ideia à<br>candidatura.</h2></div>
+    <div class="journey-stops"><div><span class="step-icon">${icon('user')}</span><section><small>01 · PONTO DE PARTIDA</small><h3>Sua história e seus objetivos</h3><p>Notas, interesses e experiências.</p></section><span class="step-check">${icon('check')}</span></div>
+    <div><span class="step-icon violet">${icon('school')}</span><section><small>02 · SEUS DESTINOS</small><h3>12 escolhas com intenção</h3><div class="preview-groups"><span><b>3</b> sonho</span><span><b>4</b> possíveis</span><span><b>5</b> mais acessíveis</span></div></section></div>
+    <div><span class="step-icon">${icon('pen')}</span><section><small>03 · PRÓXIMOS PASSOS</small><h3>Prepare sua candidatura</h3><p>Essays, SAT e organização, juntos.</p></section></div></div>
+    <div class="preview-footer">${icon('bookmark')} Suas escolhas, reunidas em um só lugar.</div>
+  </div></section>
+  <section class="tools-intro"><div><span class="eyebrow">DA PESQUISA À CANDIDATURA</span><h2>Menos abas abertas.<br>Mais clareza para decidir.</h2></div><p>Escolha por onde começar.<br>O resto você constrói no seu tempo.</p></section>
+  <section class="landing-features" aria-label="Suas ferramentas">${tools.map((tool,i)=>`<article class="tool-card tool-card-${i}"><span class="feature-index">0${i+1}</span><span class="feature-icon feature-${i}">${icon(tool.icon)}</span><h3>${tool.title}</h3><p>${tool.description}</p>${tool.detail||''}<div class="tool-card-footer"><small>${tool.meta}</small>${tool.page==='universidades'||s.user||s.demo?link(tool.page,`${tool.label} ${icon('arrow')}`,'tool-link'):`<button class="tool-link" data-action="demo" data-demo-page="${tool.page}">${tool.label} ${icon('arrow')}</button>`}</div></article>`).join('')}</section>
+  ${homeClosing(s)}`;
+}
+
+export function dashboardView(s, taskList) {
+  const progress = profileProgress(s.profile);
+  const done = s.tasks.filter(t=>t.done).length;
+  const next = !s.profile ? ['perfil','Vamos começar por você.','Conte sua história, suas experiências e o que você procura em uma universidade.','Completar meu perfil'] : s.list.length < 12 ? ['universidades','Seu próximo destino está aqui.','Explore o catálogo e encontre as opções que combinam com o que você quer construir.','Explorar universidades'] : ['candidaturas','Suas escolhas viraram um plano.','Organize prazos e acompanhe as próximas ações para cada universidade da sua lista.','Organizar minha candidatura'];
+  const pending = [...s.tasks].filter(t=>!t.done).sort((a,b)=>(a.due_on || '9999').localeCompare(b.due_on || '9999'));
+  return `${head('SEU ESPAÇO PARA IR MAIS LONGE',`Olá, ${e(s.profile?.full_name?.split(' ')[0]||'estudante')}`,'Veja suas escolhas, seu progresso e o que fazer a seguir.',link('perfil',`${icon('user')} Atualizar meu perfil`,'button secondary'))}
+    <div class="dashboard-grid"><section class="dashboard-hero"><span class="eyebrow">SEU PRÓXIMO PASSO</span><h2>${next[1]}</h2><p>${next[2]}</p>${link(next[0],`${next[3]} ${icon('arrow')}`,'button lime')}<span class="hero-orbit orbit-one" aria-hidden="true"></span><span class="hero-orbit orbit-two" aria-hidden="true"></span><span class="hero-star" aria-hidden="true">✦</span></section>
+    <section class="panel profile-summary"><div class="section-title"><span class="eyebrow">SEU PONTO DE PARTIDA</span>${icon('user')}</div><div class="progress-ring" style="--progress:${progress}%" role="progressbar" aria-label="Perfil preenchido" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"><span><b>${progress}<small>%</small></b><small>do perfil preenchido</small></span></div><p>${progress===100?'Seu contexto está pronto. Atualize sempre que algo mudar.':'Quanto mais você conta, mais contexto tem para suas escolhas.'}</p>${link('perfil','Continuar meu perfil →','text-link')}</section></div>
+    <div class="metric-grid"><article><div class="metric-heading"><span>MINHAS ESCOLHAS</span>${icon('bookmark')}</div><strong>${s.list.length}<small> / 12</small></strong><small>Seu mapa de universidades</small></article><article><div class="metric-heading"><span>MEU SAT ATUAL</span>${icon('chart')}</div><strong>${s.profile?.sat_actual??'—'}</strong><small>Meta: ${s.profile?.sat_target??'a definir'} · cenário futuro</small></article><article><div class="metric-heading"><span>AÇÕES CONCLUÍDAS</span>${icon('check')}</div><strong>${done}<small> / ${s.tasks.length}</small></strong><small>Progresso do plano, não chance de admissão</small></article></div>
+    <section class="panel journey-progress"><div class="section-title"><div><h2>Sua lista está tomando forma</h2><p>Três grupos para organizar suas possibilidades.</p></div>${link('lista','Ver minha lista →','text-link')}</div><div class="journey-groups">${Object.entries(groups).map(([key,g],i)=>{const count=s.list.filter(x=>x.category===key).length;return `<a href="#lista" class="journey-group group-${key}"><span class="group-number">0${i+1}</span><div><b>${g.label}</b><small>${count} de ${g.limit} escolhidas</small><div class="slot-dots" aria-hidden="true">${Array.from({length:g.limit},(_,n)=>`<i class="${n<count?'filled':''}"></i>`).join('')}</div></div>${icon('arrow')}</a>`;}).join('')}</div></section>
+    <div class="two-columns"><section class="panel"><div class="section-title"><h2>O que vem agora</h2>${link('candidaturas','Ver meu plano →','text-link')}</div>${taskList(pending.slice(0,4))}</section><section class="panel assistant-shortcuts"><span class="eyebrow">QUATRO ESPECIALIDADES</span><h2>Um apoio para cada etapa.</h2><p>Escolha o assunto que você quer trabalhar hoje.</p><div>${Object.entries(agents).map(([key,[title]],i)=>`<button data-agent="${key}"><span class="feature-icon feature-${i}">${icon(['school','pen','chart','check'][i])}</span><b>${title}</b>${icon('arrow')}</button>`).join('')}</div></section></div>`;
+}

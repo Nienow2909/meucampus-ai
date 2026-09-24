@@ -3,3 +3,9 @@ dist/
 .env
 .env.*
 !.env.example
+
+test-results/
+playwright-report/
+supabase/.temp/
+
+.runtime-tmp/
